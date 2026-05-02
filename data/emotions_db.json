@@ -1,0 +1,222 @@
+[
+    {
+        "emotion": "Felicidad",
+        "category": "Joy",
+        "intensity": 3,
+        "v": 1.0,
+        "a": 0.9,
+        "d": 0.9,
+        "description": "The most intense state of joy; overwhelming delight."
+    },
+    {
+        "emotion": "Alegría",
+        "category": "Joy",
+        "intensity": 2,
+        "v": 0.8,
+        "a": 0.5,
+        "d": 0.7,
+        "description": "Feeling joyful and content."
+    },
+    {
+        "emotion": "Serenidad",
+        "category": "Joy",
+        "intensity": 1,
+        "v": 0.6,
+        "a": -0.4,
+        "d": 0.5,
+        "description": "Feeling calm and at peace."
+    },
+
+    {
+        "emotion": "Dolor",
+        "category": "Sadness",
+        "intensity": 3,
+        "v": -1.0,
+        "a": -0.2,
+        "d": -0.9,
+        "description": "The most intense state of sadness; profound loss."
+    },
+    {
+        "emotion": "Tristeza",
+        "category": "Sadness",
+        "intensity": 2,
+        "v": -0.7,
+        "a": -0.5,
+        "d": -0.6,
+        "description": "Feeling sad and disappointed."
+    },
+    {
+        "emotion": "Pensativa",
+        "category": "Sadness",
+        "intensity": 1,
+        "v": -0.4,
+        "a": -0.7,
+        "d": -0.4,
+        "description": "Feeling thoughtful and reflective."
+    },
+
+    {
+        "emotion": "Admiracion",
+        "category": "Trust",
+        "intensity": 3,
+        "v": 1.0,
+        "a": 0.2,
+        "d": 0.9,
+        "description": "The most intense state of trust; deep admiration."
+    },
+    {
+        "emotion": "Confianza",
+        "category": "Trust",
+        "intensity": 2,
+        "v": 0.8,
+        "a": 0.1,
+        "d": 0.7,
+        "description": "Feeling confident and secure."
+    },
+    {
+        "emotion": "Aceptacion",
+        "category": "Trust",
+        "intensity": 1,
+        "v": 0.6,
+        "a": -0.1,
+        "d": 0.5,
+        "description": "Feeling accepting and open."
+    },
+    
+    {
+        "emotion": "Terror",
+        "category": "Terror",
+        "intensity": 3,
+        "v": -0.9,
+        "a": 0.9,
+        "d": -0.8,
+        "description": "Feeling intense fear and panic."
+    },
+    {
+        "emotion": "Miedo",
+        "category": "Fear",
+        "intensity": 2,
+        "v": -0.8,
+        "a": 0.7,
+        "d": -0.6,
+        "description": "Feeling afraid and anxious."
+    },
+    {
+        "emotion": "Inseguridad",
+        "category": "Fear",
+        "intensity": 1,
+        "v": -0.6,
+        "a": 0.5,
+        "d": -0.4,
+        "description": "Feeling uncertain and vulnerable."
+    },
+
+    {
+        "emotion": "Ira",
+        "category": "Anger",
+        "intensity": 3,
+        "v": -0.8,
+        "a": 0.9,
+        "d": -0.7,
+        "description": "The most intense state of anger; rage."
+    },
+    {
+        "emotion": "Enojo",
+        "category": "Anger",
+        "intensity": 2,
+        "v": -0.7,
+        "a": 0.8,
+        "d": -0.5,
+        "description": "Feeling angry and frustrated."
+    },
+    {
+        "emotion": "Molestia",
+        "category": "Anger",
+        "intensity": 1,
+        "v": -0.5,
+        "a": 0.6,
+        "d": -0.3,
+        "description": "Feeling annoyed and irritated."
+    },
+    {
+        "emotion": "Alerta",
+        "category": "Anticipation",
+        "intensity": 3,
+        "v": 0.2,
+        "a": 0.6,
+        "d": 0.5,
+        "description": "The most intense state of anticipation; being highly watchful and alert."
+    },
+    {
+        "emotion": "Anticipacion",
+        "category": "Anticipation",
+        "intensity": 2,
+        "v": 0.1,
+        "a": 0.3,
+        "d": 0.3,
+        "description": "Feeling expectant and looking forward to something."
+    },
+    {
+        "emotion": "Interes",
+        "category": "Anticipation",
+        "intensity": 1,
+        "v": 0.1,
+        "a": 0.1,
+        "d": 0.1,
+        "description": "Feeling curious or attentive toward something."
+    },
+    {
+        "emotion": "Desprecio",
+        "category": "Disgust",
+        "intensity": 3,
+        "v": -0.9,
+        "a": 0.2,
+        "d": 0.3,
+        "description": "The most intense state of disgust; intense dislike or disgust."
+    },
+    {
+        "emotion": "Disgusto",
+        "category": "Disgust",
+        "intensity": 2,
+        "v": -0.7,
+        "a": 0.1,
+        "d": 0.1,
+        "description": "Feeling a strong sense of dislike or revulsion."
+    },
+    {
+        "emotion": "Aburrimiento",
+        "category": "Disgust",
+        "intensity": 1,
+        "v": -0.3,
+        "a": -0.5,
+        "d": -0.2,
+        "description": "Feeling weary and restless through lack of interest."
+    },
+    {
+        "emotion": "Asombro",
+        "category": "Surprise",
+        "intensity": 3,
+        "v": 0.4,
+        "a": 0.8,
+        "d": -0.2,
+        "description": "The most intense state of surprise; feeling overwhelmed by wonder."
+    },
+    {
+        "emotion": "Surpresa",
+        "category": "Surprise",
+        "intensity": 2,
+        "v": 0.2,
+        "a": 0.6,
+        "d": -0.4,
+        "description": "Feeling astonished by something unexpected."
+    },
+    {
+        "emotion": "Distraido",
+        "category": "Surprise",
+        "intensity": 1,
+        "v": 0.0,
+        "a": 0.2,
+        "d": -0.3,
+        "description": "A mild state of surprise; difficulty in focusing due to new stimuli."
+    }
+]
