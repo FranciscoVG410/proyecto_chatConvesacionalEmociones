@@ -1,36 +1,52 @@
 import streamlit as st
-import google.generativeai as genai
+from groq import Groq
 from src.rag_engine import EmotionRAGEngine
 from src.vad_processor import VADTracker
 import os
 from dotenv import load_dotenv
+import matplotlib.pyplot as plt
 
-# Configuration
+# ---------------------------
+# CONFIG
+# ---------------------------
+st.set_page_config(page_title="Emotional Alignment Assistant", layout="wide")
+
 load_dotenv()
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel('models/gemini-2.5-flash')
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+MODELO_GROQ = "llama-3.3-70b-versatile"
 
-# Initialize components
+# ---------------------------
+# INIT
+# ---------------------------
 if 'rag_engine' not in st.session_state:
     st.session_state.rag_engine = EmotionRAGEngine('data/emotions_db.json')
     st.session_state.rag_engine.create_embeddings()
     st.session_state.vad_tracker = VADTracker()
     st.session_state.messages = []
+    st.session_state.vad_history = []
 
+# ---------------------------
+# HEADER
+# ---------------------------
 st.title("Emotional Alignment Assistant")
-st.markdown("Based in Plutchik's Wheel of Emotions, this assistant helps you understand and manage your emotions through a conversational interface.")
+st.markdown("Based in Plutchik's Wheel of Emotions, this assistant helps you understand and manage your emotions.")
 
-# Chat interface
+# ---------------------------
+# CHAT
+# ---------------------------
 for message in st.session_state.messages:
     with st.chat_message(message['role']):
         st.markdown(message['content'])
 
 if prompt := st.chat_input("How are you feeling today?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
+
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # Query RAG engine for emotion analysis
+    # ---------------------------
+    # RAG
+    # ---------------------------
     emotion_context = st.session_state.rag_engine.query_emotion(prompt)
     
     if emotion_context:
@@ -40,24 +56,108 @@ if prompt := st.chat_input("How are you feeling today?"):
     else:
         v, a, distancia, emotion_name = 0, 0, 0, "neutral"
 
-# GENERACIÓN CON GEMINI
+    # guardar estado para UI
+    st.session_state.v = v
+    st.session_state.a = a
+    st.session_state.emotion = emotion_name
+    st.session_state.distancia = distancia
+
+    # historial
+    st.session_state.vad_history.append((v, a))
+
+    # ---------------------------
+    # GROQ
+    # ---------------------------
     instruccion_sistema = f"""
     Eres un agente conversacional experto en inteligencia emocional.
     Contexto detectado: El usuario siente '{emotion_name}' (V:{v}, A:{a}).
     Tu objetivo es llevar al usuario hacia la 'Serenidad' (V:0.6, A:-0.4).
     Distancia actual al objetivo: {distancia:.2f}.
-    Responde de forma empática y breve, usando técnicas de validación emocional.
+    Responde de forma empática y breve.
     """
 
     with st.chat_message("assistant"):
-        response = model.generate_content([instruccion_sistema, prompt])
-        st.markdown(response.text)
-        st.session_state.messages.append({"role": "assistant", "content": response.text})
+        try:
+            chat_completion = client.chat.completions.create(
+                messages=[
+                    {"role": "system", "content": instruccion_sistema},
+                    {"role": "user", "content": prompt}
+                ],
+                model=MODELO_GROQ,
+                temperature=0.5
+            )
+            response_text = chat_completion.choices[0].message.content
+            st.markdown(response_text)
+            st.session_state.messages.append({"role": "assistant", "content": response_text})
+        except Exception as e:
+            st.error(f"Error en la API de Groq: {e}")
 
-    # 5. Visualización técnica (Para tu Tesis)
-    with st.sidebar:
-        st.subheader("Métricas en Tiempo Real")
-        st.write(f"**Emoción detectada:** {emotion_name}")
-        st.write(f"**Valencia:** {v}")
-        st.write(f"**Arousal:** {a}")
-        st.write(f"**Distancia al Safe Space:** {distancia:.2f}")
+# ---------------------------
+# DASHBOARD EMOCIONAL
+# ---------------------------
+st.divider()
+st.subheader("Estado Emocional")
+
+v = st.session_state.get("v", 0)
+a = st.session_state.get("a", 0)
+emotion_name = st.session_state.get("emotion", "neutral")
+distancia = st.session_state.get("distancia", 0)
+
+col1, col2 = st.columns([1, 2])
+
+# color dinámico
+if v > 0.3:
+    color = "green"
+elif v < -0.3:
+    color = "red"
+else:
+    color = "orange"
+
+# ---------------------------
+# PANEL IZQUIERDO
+# ---------------------------
+with col1:
+    st.markdown(f"### {emotion_name}")
+    st.markdown(f"**Valencia:** {v:.2f}")
+    st.markdown(f"**Arousal:** {a:.2f}")
+    st.markdown(f"**Distancia:** {distancia:.2f}")
+
+# ---------------------------
+# SIDEBAR
+# ---------------------------
+with st.sidebar:
+    st.header("📊 Estado emocional")
+
+    v = st.session_state.get("v", 0)
+    a = st.session_state.get("a", 0)
+    distancia = st.session_state.get("distancia", 0)
+    emotion_name = st.session_state.get("emotion", "neutral")
+
+    st.write(f"**{emotion_name}**")
+    st.write(f"V: {v:.2f} | A: {a:.2f}")
+
+    # grapho VAD
+    fig, ax = plt.subplots(figsize=(3, 3)) 
+
+    history = st.session_state.get("vad_history", [])
+
+    if history:
+        xs = [p[0] for p in history]
+        ys = [p[1] for p in history]
+        ax.plot(xs, ys, marker='o')
+
+    # punto actual
+    ax.scatter(v, a)
+
+    # objetivo (Serenidad)
+    ax.scatter(0.6, -0.4, marker='x')
+
+    ax.set_xlim(-1, 1)
+    ax.set_ylim(-1, 1)
+    ax.axhline(0)
+    ax.axvline(0)
+
+    ax.set_xticks([])
+    ax.set_yticks([])
+
+    st.pyplot(fig, use_container_width=True)

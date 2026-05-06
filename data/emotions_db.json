@@ -1,222 +1,338 @@
 [
     {
-        "emotion": "Felicidad",
+        "emotion": "Extasis",
         "category": "Joy",
-        "intensity": 3,
         "v": 1.0,
-        "a": 0.9,
-        "d": 0.9,
-        "description": "The most intense state of joy; overwhelming delight."
+        "a": 0.95,
+        "description": "Máximo estado de alegría y deleite abrumador.",
+        "keywords": [
+            "no puedo creerlo estoy feliz",
+            "es el mejor momento de mi vida",
+            "todo es perfecto",
+            "me siento euforico",
+            "estoy lleno de felicidad"
+        ]
     },
     {
-        "emotion": "Alegría",
+        "emotion": "Alegria",
         "category": "Joy",
-        "intensity": 2,
         "v": 0.8,
-        "a": 0.5,
-        "d": 0.7,
-        "description": "Feeling joyful and content."
+        "a": 0.6,
+        "description": "Sentimiento de satisfacción y felicidad viva.",
+        "keywords": [
+            "me siento feliz",
+            "estoy contento",
+            "todo salio bien",
+            "me siento muy bien hoy",
+            "estoy de buen humor"
+        ]
     },
     {
         "emotion": "Serenidad",
         "category": "Joy",
-        "intensity": 1,
         "v": 0.6,
-        "a": -0.4,
-        "d": 0.5,
-        "description": "Feeling calm and at peace."
+        "a": -0.6,
+        "description": "Estado de calma, paz y tranquilidad.",
+        "keywords": [
+            "me siento tranquilo",
+            "todo esta en calma",
+            "estoy en paz",
+            "no tengo preocupaciones",
+            "me siento relajado"
+        ]
     },
-
     {
         "emotion": "Dolor",
         "category": "Sadness",
-        "intensity": 3,
         "v": -1.0,
-        "a": -0.2,
-        "d": -0.9,
-        "description": "The most intense state of sadness; profound loss."
+        "a": -0.4,
+        "description": "Estado intenso de tristeza; pérdida profunda.",
+        "keywords": [
+            "siento un vacio enorme",
+            "esto me duele mucho",
+            "perdi algo importante",
+            "no puedo con este dolor",
+            "me siento devastado"
+        ]
     },
     {
         "emotion": "Tristeza",
         "category": "Sadness",
-        "intensity": 2,
         "v": -0.7,
-        "a": -0.5,
-        "d": -0.6,
-        "description": "Feeling sad and disappointed."
+        "a": -0.6,
+        "description": "Sentimiento de desánimo y decepción.",
+        "keywords": [
+            "me siento triste",
+            "no tengo ganas de nada",
+            "me siento mal",
+            "quiero llorar",
+            "estoy desanimado"
+        ]
     },
     {
         "emotion": "Pensativa",
         "category": "Sadness",
-        "intensity": 1,
         "v": -0.4,
         "a": -0.7,
-        "d": -0.4,
-        "description": "Feeling thoughtful and reflective."
+        "description": "Estado reflexivo y ligeramente triste.",
+        "keywords": [
+            "he estado pensando mucho",
+            "recuerdo el pasado",
+            "estoy reflexionando",
+            "me siento nostalgico",
+            "estoy en mis pensamientos"
+        ]
     },
-
-    {
-        "emotion": "Admiracion",
-        "category": "Trust",
-        "intensity": 3,
-        "v": 1.0,
-        "a": 0.2,
-        "d": 0.9,
-        "description": "The most intense state of trust; deep admiration."
-    },
-    {
-        "emotion": "Confianza",
-        "category": "Trust",
-        "intensity": 2,
-        "v": 0.8,
-        "a": 0.1,
-        "d": 0.7,
-        "description": "Feeling confident and secure."
-    },
-    {
-        "emotion": "Aceptacion",
-        "category": "Trust",
-        "intensity": 1,
-        "v": 0.6,
-        "a": -0.1,
-        "d": 0.5,
-        "description": "Feeling accepting and open."
-    },
-    
     {
         "emotion": "Terror",
-        "category": "Terror",
-        "intensity": 3,
-        "v": -0.9,
-        "a": 0.9,
-        "d": -0.8,
-        "description": "Feeling intense fear and panic."
+        "category": "Fear",
+        "v": -0.95,
+        "a": 1.0,
+        "description": "Miedo intenso y pánico paralizante.",
+        "keywords": [
+            "estoy aterrorizado",
+            "tengo mucho miedo",
+            "algo malo va a pasar",
+            "siento peligro",
+            "estoy en panico"
+        ]
     },
     {
         "emotion": "Miedo",
         "category": "Fear",
-        "intensity": 2,
         "v": -0.8,
-        "a": 0.7,
-        "d": -0.6,
-        "description": "Feeling afraid and anxious."
+        "a": 0.8,
+        "description": "Sensación de angustia por un riesgo real o imaginario.",
+        "keywords": [
+            "tengo miedo",
+            "me siento inseguro",
+            "estoy asustado",
+            "algo me preocupa",
+            "no me siento seguro"
+        ]
     },
     {
-        "emotion": "Inseguridad",
+        "emotion": "Aprension",
         "category": "Fear",
-        "intensity": 1,
         "v": -0.6,
         "a": 0.5,
-        "d": -0.4,
-        "description": "Feeling uncertain and vulnerable."
+        "description": "Inquietud o recelo ante lo que pueda suceder.",
+        "keywords": [
+            "estoy nervioso",
+            "tengo un mal presentimiento",
+            "me siento inquieto",
+            "algo no me da buena espina",
+            "estoy preocupado"
+        ]
     },
-
     {
         "emotion": "Ira",
         "category": "Anger",
-        "intensity": 3,
-        "v": -0.8,
-        "a": 0.9,
-        "d": -0.7,
-        "description": "The most intense state of anger; rage."
+        "v": -0.85,
+        "a": 0.95,
+        "description": "Rabia violenta y furia desatada.",
+        "keywords": [
+            "estoy furioso",
+            "quiero gritar",
+            "no lo soporto",
+            "tengo mucha rabia",
+            "estoy explotando de enojo"
+        ]
     },
     {
         "emotion": "Enojo",
         "category": "Anger",
-        "intensity": 2,
         "v": -0.7,
         "a": 0.8,
-        "d": -0.5,
-        "description": "Feeling angry and frustrated."
+        "description": "Sentimiento de irritación y frustración.",
+        "keywords": [
+            "estoy molesto",
+            "esto es injusto",
+            "me hace enojar",
+            "estoy frustrado",
+            "no me gusta esto"
+        ]
     },
     {
-        "emotion": "Molestia",
+        "emotion": "Fastidio",
         "category": "Anger",
-        "intensity": 1,
         "v": -0.5,
-        "a": 0.6,
-        "d": -0.3,
-        "description": "Feeling annoyed and irritated."
+        "a": 0.5,
+        "description": "Ligera irritación o incomodidad.",
+        "keywords": [
+            "esto me irrita",
+            "ya me canse",
+            "me molesta",
+            "esto es pesado",
+            "estoy harto"
+        ]
     },
     {
-        "emotion": "Alerta",
-        "category": "Anticipation",
-        "intensity": 3,
-        "v": 0.2,
-        "a": 0.6,
-        "d": 0.5,
-        "description": "The most intense state of anticipation; being highly watchful and alert."
-    },
-    {
-        "emotion": "Anticipacion",
-        "category": "Anticipation",
-        "intensity": 2,
-        "v": 0.1,
+        "emotion": "Admiracion",
+        "category": "Trust",
+        "v": 0.9,
         "a": 0.3,
-        "d": 0.3,
-        "description": "Feeling expectant and looking forward to something."
+        "description": "Aprecio profundo y respeto por alguien.",
+        "keywords": [
+            "lo admiro mucho",
+            "eso fue increible",
+            "me inspira",
+            "que impresionante",
+            "es digno de respeto"
+        ]
     },
     {
-        "emotion": "Interes",
-        "category": "Anticipation",
-        "intensity": 1,
-        "v": 0.1,
-        "a": 0.1,
-        "d": 0.1,
-        "description": "Feeling curious or attentive toward something."
+        "emotion": "Confianza",
+        "category": "Trust",
+        "v": 0.8,
+        "a": 0.2,
+        "description": "Seguridad y esperanza en alguien o algo.",
+        "keywords": [
+            "confio en esto",
+            "todo saldra bien",
+            "me siento seguro",
+            "tengo fe en esto",
+            "puedo confiar"
+        ]
+    },
+    {
+        "emotion": "Aceptacion",
+        "category": "Trust",
+        "v": 0.6,
+        "a": -0.2,
+        "description": "Aprobar o recibir voluntariamente una situación.",
+        "keywords": [
+            "lo acepto",
+            "esta bien asi",
+            "puedo vivir con esto",
+            "no pasa nada",
+            "entiendo la situacion"
+        ]
     },
     {
         "emotion": "Desprecio",
         "category": "Disgust",
-        "intensity": 3,
         "v": -0.9,
-        "a": 0.2,
-        "d": 0.3,
-        "description": "The most intense state of disgust; intense dislike or disgust."
+        "a": 0.3,
+        "description": "Falta de afecto o consideración; asco.",
+        "keywords": [
+            "esto es repugnante",
+            "me da asco",
+            "no lo soporto",
+            "es desagradable",
+            "lo odio"
+        ]
     },
     {
-        "emotion": "Disgusto",
+        "emotion": "Aversion",
         "category": "Disgust",
-        "intensity": 2,
         "v": -0.7,
-        "a": 0.1,
-        "d": 0.1,
-        "description": "Feeling a strong sense of dislike or revulsion."
+        "a": 0.2,
+        "description": "Rechazo fuerte hacia algo o alguien.",
+        "keywords": [
+            "no me gusta nada",
+            "prefiero evitarlo",
+            "me desagrada",
+            "no quiero verlo",
+            "me incomoda"
+        ]
     },
     {
         "emotion": "Aburrimiento",
         "category": "Disgust",
-        "intensity": 1,
         "v": -0.3,
-        "a": -0.5,
-        "d": -0.2,
-        "description": "Feeling weary and restless through lack of interest."
+        "a": -0.6,
+        "description": "Cansancio por falta de interés o estímulos.",
+        "keywords": [
+            "estoy aburrido",
+            "nada me interesa",
+            "esto es muy aburrido",
+            "no tengo nada que hacer",
+            "me da flojera todo"
+        ]
     },
     {
         "emotion": "Asombro",
         "category": "Surprise",
-        "intensity": 3,
-        "v": 0.4,
-        "a": 0.8,
-        "d": -0.2,
-        "description": "The most intense state of surprise; feeling overwhelmed by wonder."
+        "v": 0.5,
+        "a": 0.9,
+        "description": "Sorpresa extrema ante algo inesperado.",
+        "keywords": [
+            "wow que impresionante",
+            "no lo puedo creer",
+            "esto es increible",
+            "me dejo sorprendido",
+            "que maravilla"
+        ]
     },
     {
-        "emotion": "Surpresa",
+        "emotion": "Sorpresa",
         "category": "Surprise",
-        "intensity": 2,
         "v": 0.2,
-        "a": 0.6,
-        "d": -0.4,
-        "description": "Feeling astonished by something unexpected."
+        "a": 0.7,
+        "description": "Alteración por un evento imprevisto.",
+        "keywords": [
+            "no me lo esperaba",
+            "que sorpresa",
+            "esto fue inesperado",
+            "me tomo por sorpresa",
+            "no sabia esto"
+        ]
     },
     {
-        "emotion": "Distraido",
+        "emotion": "Distraccion",
         "category": "Surprise",
-        "intensity": 1,
         "v": 0.0,
         "a": 0.2,
-        "d": -0.3,
-        "description": "A mild state of surprise; difficulty in focusing due to new stimuli."
+        "description": "Dificultad para concentrarse por nuevos estímulos.",
+        "keywords": [
+            "no puedo concentrarme",
+            "me distraigo mucho",
+            "pierdo el enfoque",
+            "no estoy atento",
+            "mi mente se va"
+        ]
+    },
+    {
+        "emotion": "Vigilancia",
+        "category": "Anticipation",
+        "v": 0.3,
+        "a": 0.7,
+        "description": "Atención extrema ante el entorno.",
+        "keywords": [
+            "estoy muy atento",
+            "estoy alerta",
+            "observando todo",
+            "preparado para reaccionar",
+            "no bajo la guardia"
+        ]
+    },
+    {
+        "emotion": "Anticipacion",
+        "category": "Anticipation",
+        "v": 0.2,
+        "a": 0.4,
+        "description": "Expectativa de lo que va a suceder.",
+        "keywords": [
+            "estoy esperando algo",
+            "ver que va a pasar",
+            "tengo expectativas",
+            "algo viene pronto",
+            "estoy preparado"
+        ]
+    },
+    {
+        "emotion": "Interes",
+        "category": "Anticipation",
+        "v": 0.2,
+        "a": 0.3,
+        "description": "Curiosidad o atención hacia algo.",
+        "keywords": [
+            "me interesa esto",
+            "quiero saber mas",
+            "me llama la atencion",
+            "esto es interesante",
+            "tengo curiosidad"
+        ]
     }
 ]

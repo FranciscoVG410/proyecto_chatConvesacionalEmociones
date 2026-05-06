@@ -4,7 +4,7 @@ class VADTracker:
     def __init__(self, safe_space_v=0.6, safe_space_a=0.4):
         self.target_v = safe_space_v
         self.target_a = safe_space_a
-        self.history = [] # To save the trajectory of VAD values
+        self.history = [] 
 
     def calculate_distance(self, current_v, current_a):
         # Calculate the distance in 2D space (Valence and Arousal)
