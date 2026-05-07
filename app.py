@@ -9,8 +9,6 @@ import matplotlib.pyplot as plt
 # ---------------------------
 # CONFIG
 # ---------------------------
-st.set_page_config(page_title="Emotional Alignment Assistant", layout="wide")
-
 load_dotenv()
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 MODELO_GROQ = "llama-3.3-70b-versatile"
@@ -28,8 +26,8 @@ if 'rag_engine' not in st.session_state:
 # ---------------------------
 # HEADER
 # ---------------------------
-st.title("Emotional Alignment Assistant")
-st.markdown("Based in Plutchik's Wheel of Emotions, this assistant helps you understand and manage your emotions.")
+st.title("Socius - Emotional Alignment Assistant")
+st.markdown("Tu asistente conversacional que detecta tu estado emocional y te guía hacia la serenidad.")
 
 # ---------------------------
 # CHAT
@@ -38,7 +36,7 @@ for message in st.session_state.messages:
     with st.chat_message(message['role']):
         st.markdown(message['content'])
 
-if prompt := st.chat_input("How are you feeling today?"):
+if prompt := st.chat_input("Como te sientes el dia de hoy?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
 
     with st.chat_message("user"):
@@ -73,7 +71,7 @@ if prompt := st.chat_input("How are you feeling today?"):
     Contexto detectado: El usuario siente '{emotion_name}' (V:{v}, A:{a}).
     Tu objetivo es llevar al usuario hacia la 'Serenidad' (V:0.6, A:-0.4).
     Distancia actual al objetivo: {distancia:.2f}.
-    Responde de forma empática y breve.
+    Responde de forma empática y breve sin mencionar tu objetivo.
     """
 
     with st.chat_message("assistant"):
@@ -96,7 +94,6 @@ if prompt := st.chat_input("How are you feeling today?"):
 # DASHBOARD EMOCIONAL
 # ---------------------------
 st.divider()
-st.subheader("Estado Emocional")
 
 v = st.session_state.get("v", 0)
 a = st.session_state.get("a", 0)
@@ -113,20 +110,12 @@ elif v < -0.3:
 else:
     color = "orange"
 
-# ---------------------------
-# PANEL IZQUIERDO
-# ---------------------------
-with col1:
-    st.markdown(f"### {emotion_name}")
-    st.markdown(f"**Valencia:** {v:.2f}")
-    st.markdown(f"**Arousal:** {a:.2f}")
-    st.markdown(f"**Distancia:** {distancia:.2f}")
 
 # ---------------------------
 # SIDEBAR
 # ---------------------------
 with st.sidebar:
-    st.header("📊 Estado emocional")
+    st.header("ESTADO EMOCIONAL")
 
     v = st.session_state.get("v", 0)
     a = st.session_state.get("a", 0)
