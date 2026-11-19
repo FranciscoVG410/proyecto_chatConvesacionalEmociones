@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reporte de Telemetría Emocional VAD - Socius</title>
+  
+  <link rel="stylesheet" href="/css/reportStyle.css">
+</head>
+<body>
+
+  <button class="btn-print" onclick="window.print()">Imprimir / Guardar en PDF</button>
+
+  <h1>Reporte de Telemetría Emocional Tridimensional (VAD)</h1>
+  
+  <div class="participant-info" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px; display: flex; gap: 30px; flex-wrap: wrap;">
+      <div><strong>Participante:</strong> {{ user_profile.pseudonym }}</div>
+      <div><strong>Edad:</strong> {{ user_profile.age }} {% if user_profile.age != 'N/A' %}años{% endif %}</div>
+      <div><strong>Género:</strong> {{ user_profile.gender }}</div>
+      <div><strong>Registro:</strong> {{ user_profile.created_at }}</div>
+  </div>
+
+  {% if critical_count > 0 %}
+  <div style="background-color: #fef2f2; border: 1px solid #fca5a5; border-left: 5px solid #ef4444; padding: 15px; margin-bottom: 25px; border-radius: 6px;">
+      <h3 style="color: #991b1b; margin-top: 0; font-size: 16px;">Advertencias y Eventos Críticos Registrados ({{ critical_count }})</h3>
+      <ul style="margin-bottom: 0; color: #7f1d1d; padding-left: 20px;">
+          {% for cr in critical_records %}
+              <li style="margin-bottom: 6px;">
+                  <strong>Mensaje #{{ cr.msg_number }}</strong>: "{{ cr.user_msg }}"
+              </li>
+          {% endfor %}
+      </ul>
+  </div>
+  {% endif %}
+
+  <section>
+    <h2 style="text-align: center;">1. Bitácora de Mensajes e Historial Emocional VAD</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Nº</th>
+          <th>Hora</th>
+          <th>Mensaje del Usuario</th>
+          <th>Estado Evaluado</th>
+          <th>Valencia (V)</th>
+          <th>Activación (A)</th>
+          <th>Dominancia (D)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if records %}
+          {% for item in records %}
+          <tr>
+            <td style="font-weight: bold; color: #4f46e5;">#{{ item.msg_number }}</td>
+            <td>{{ item.timestamp }}</td>
+            <td>{{ item.user_msg }}</td>
+            <td><strong>{{ item.emotion }}</strong></td>
+            <td><span class="vad-pill" style="color: #0369a1;">{{ "%.2f"|format(item.v) }}</span></td>
+            <td><span class="vad-pill" style="color: #b91c1c;">{{ "%.2f"|format(item.a) }}</span></td>
+            <td><span class="vad-pill" style="color: #15803d;">{{ "%.2f"|format(item.d) }}</span></td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="7" style="text-align:center;">No hay registros acumulados en esta sesión.</td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Sección 2: Cubo 3D Estilo Gabinete -->
+  <section class="chart-section">
+    <h2>2. Visualización Espacial (Cubo VAD Estilo Gabinete)</h2>
+    <canvas id="vadCubeCanvas" width="650" height="450"></canvas>
+  </section>
+
+  <!-- Sección 3: Gráficas 2D Duales (Valencia-Activación y Dominancia-Activación) -->
+  <section class="chart-section">
+    <h2>3. Análisis en Planos 2D Cartesianos</h2>
+    <canvas id="vadDualCanvas" width="650" height="380"></canvas>
+  </section>
+
+  <!-- Lógica unificada de renderizado idéntica al Dashboard -->
+  <script id="vad-data" type="application/json">{{ vad_data_js | tojson | safe }}</script>
+  <script>
+    try {
+      const vadPoints = JSON.parse(document.getElementById('vad-data').textContent);
+
+      // 1. RENDERIZADO DEL CUBO 3D GABINETE
+      
+      const cubeCanvas = document.getElementById('vadCubeCanvas');
+      const cubeCtx = cubeCanvas.getContext('2d');
+
+      function project3DToCabinet(v, a, d) {
+        const width = cubeCanvas.width;
+        const height = cubeCanvas.height;
+        const scale = Math.min(width, height) * 0.30; 
+
+        const centerX = width / 2 - 40;
+        const centerY = height / 2 + 30;
+
+        const angle = Math.PI / 4; 
+        const depthFactor = 0.45;  
+        const depthShift = (d + 1) * scale * depthFactor;
+
+        return {
+          x: centerX + (v * scale) + (depthShift * Math.cos(angle)),
+          y: centerY - (a * scale) - (depthShift * Math.sin(angle))
+        };
+      }
+
+      function draw3DCubeScene() {
+        cubeCtx.clearRect(0, 0, cubeCanvas.width, cubeCanvas.height);
+
+        const rawCorners = [
+            {v: -1, a: -1, d: -1}, {v: 1, a: -1, d: -1}, {v: 1, a: 1, d: -1}, {v: -1, a: 1, d: -1}, 
+            {v: -1, a: -1, d:  1}, {v: 1, a: -1, d:  1}, {v: 1, a: 1, d:  1}, {v: -1, a: 1, d:  1}  
+        ];
+        const vertices = rawCorners.map(c => project3DToCabinet(c.v, c.a, c.d));
+
+        const edges = [
+            [0,1], [1,2], [2,3], [3,0], 
+            [4,5], [5,6], [6,7], [7,4], 
+            [0,4], [1,5], [2,6], [3,7]  
+        ];
+
+        cubeCtx.lineWidth = 2;
+        cubeCtx.strokeStyle = '#16a34a';
+        cubeCtx.setLineDash([]);
+
+        edges.forEach((edge) => {
+            const p1 = vertices[edge[0]];
+            const p2 = vertices[edge[1]];
+            cubeCtx.beginPath();
+            cubeCtx.moveTo(p1.x, p1.y);
+            cubeCtx.lineTo(p2.x, p2.y);
+            cubeCtx.stroke();
+        });
+
+        // Cruz central de referencia
+        cubeCtx.save();
+        cubeCtx.strokeStyle = '#94a3b8';
+        cubeCtx.lineWidth = 1.5;
+        cubeCtx.setLineDash([4, 4]);
+
+        const vStart = project3DToCabinet(-1, 0, -1), vEnd = project3DToCabinet(1, 0, -1);
+        cubeCtx.beginPath(); cubeCtx.moveTo(vStart.x, vStart.y); cubeCtx.lineTo(vEnd.x, vEnd.y); cubeCtx.stroke();
+
+        const aStart = project3DToCabinet(0, -1, -1), aEnd = project3DToCabinet(0, 1, -1);
+        cubeCtx.beginPath(); cubeCtx.moveTo(aStart.x, aStart.y); cubeCtx.lineTo(aEnd.x, aEnd.y); cubeCtx.stroke();
+
+        const dStart = project3DToCabinet(0, 0, -1), dEnd = project3DToCabinet(0, 0, 1);
+        cubeCtx.beginPath(); cubeCtx.moveTo(dStart.x, dStart.y); cubeCtx.lineTo(dEnd.x, dEnd.y); cubeCtx.stroke();
+        cubeCtx.restore();
+
+        // Etiquetas
+        cubeCtx.fillStyle = '#334155';
+        cubeCtx.font = 'bold 11px Segoe UI';
+        const labelV = project3DToCabinet(0, -1, -1);
+        cubeCtx.fillText('Valencia (V)', labelV.x - 25, labelV.y + 18);
+        const labelA = project3DToCabinet(-1, 0, -1);
+        cubeCtx.fillText('Activación (A)', labelA.x - 75, labelA.y + 4);
+        const labelD = project3DToCabinet(1, 1, 0);
+        cubeCtx.fillText('Dominancia (D)', labelD.x + 12, labelD.y);
+
+        // Trayectoria y Nodos 3D
+        if (vadPoints && vadPoints.length > 0) {
+            cubeCtx.beginPath();
+            cubeCtx.strokeStyle = '#4f46e5';
+            cubeCtx.lineWidth = 2.5;
+            cubeCtx.setLineDash([]);
+
+            vadPoints.forEach((pt, index) => {
+                const p = project3DToCabinet(pt.v, pt.a, pt.d);
+                if (index === 0) cubeCtx.moveTo(p.x, p.y);
+                else cubeCtx.lineTo(p.x, p.y);
+            });
+            cubeCtx.stroke();
+
+            vadPoints.forEach((pt, index) => {
+                const p = project3DToCabinet(pt.v, pt.a, pt.d);
+                const pFloor = project3DToCabinet(pt.v, -1, pt.d);
+                const pWall = project3DToCabinet(-1, pt.a, pt.d);
+
+                cubeCtx.save();
+                cubeCtx.setLineDash([3, 3]);
+                cubeCtx.strokeStyle = 'rgba(79, 70, 229, 0.45)';
+                cubeCtx.lineWidth = 1;
+
+                cubeCtx.beginPath(); cubeCtx.moveTo(p.x, p.y); cubeCtx.lineTo(pFloor.x, pFloor.y); cubeCtx.stroke();
+                cubeCtx.beginPath(); cubeCtx.moveTo(p.x, p.y); cubeCtx.lineTo(pWall.x, pWall.y); cubeCtx.stroke();
+                cubeCtx.restore();
+
+                cubeCtx.beginPath();
+                cubeCtx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+
+                if (pt.is_critical) {
+                    cubeCtx.fillStyle = '#f59e0b';
+                    cubeCtx.strokeStyle = '#b45309';
+                } else if (index === vadPoints.length - 1) {
+                    cubeCtx.fillStyle = '#ef4444';
+                    cubeCtx.strokeStyle = '#991b1b';
+                } else {
+                    cubeCtx.fillStyle = '#4f46e5';
+                    cubeCtx.strokeStyle = '#312e81';
+                }
+
+                cubeCtx.lineWidth = 2;
+                cubeCtx.fill();
+                cubeCtx.stroke();
+
+                // Etiqueta limpia solo con el número de orden (#1)
+                cubeCtx.fillStyle = '#1e293b';
+                cubeCtx.font = 'bold 11px Segoe UI';
+                cubeCtx.fillText(pt.label, p.x + 10, p.y - 4);
+            });
+        }
+      }
+
+      draw3DCubeScene();
+
+      // 2. RENDERIZADO DE LAS GRÁFICAS 2D DUALES
+
+      const dualCanvas = document.getElementById('vadDualCanvas');
+      const dualCtx = dualCanvas.getContext('2d');
+
+      function drawDual2DScene() {
+        dualCtx.clearRect(0, 0, dualCanvas.width, dualCanvas.height);
+        const width = dualCanvas.width;
+        const height = dualCanvas.height;
+
+        const boxSize = Math.min(width * 0.38, height * 0.65);
+        const scale = boxSize / 2;
+
+        const centerLeftX = width * 0.28;
+        const centerRightX = width * 0.72;
+        const centerY = height * 0.52;
+
+        // Plano 1: Valencia (X) vs Activación (Y)
+        drawCartesianAxes(dualCtx, centerLeftX, centerY, scale, 'Valencia (V)', 'Activación (A)');
+        drawPointsAndPath2D(dualCtx, (pt) => ({
+            x: centerLeftX + (pt.v * scale),
+            y: centerY - (pt.a * scale)
+        }));
+
+        // Plano 2: Dominancia (X) vs Activación (Y)
+        drawCartesianAxes(dualCtx, centerRightX, centerY, scale, 'Dominancia (D)', 'Activación (A)');
+        drawPointsAndPath2D(dualCtx, (pt) => ({
+            x: centerRightX + (pt.d * scale),
+            y: centerY - (pt.a * scale)
+        }));
+      }
+
+      function drawCartesianAxes(ctx, centerX, centerY, scale, labelX, labelY) {
+        ctx.save();
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([]);
+
+        ctx.beginPath();
+        ctx.moveTo(centerX - scale, centerY);
+        ctx.lineTo(centerX + scale, centerY);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY - scale);
+        ctx.lineTo(centerX, centerY + scale);
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.fillStyle = '#334155';
+        ctx.font = 'bold 11px Segoe UI';
+        ctx.fillText(labelX, centerX + scale - 35, centerY + 18);
+        ctx.fillText(labelY, centerX - 35, centerY - scale - 8);
+      }
+
+      function drawPointsAndPath2D(ctx, projectionFn) {
+        if (!vadPoints || vadPoints.length === 0) return;
+
+        ctx.beginPath();
+        ctx.strokeStyle = '#4f46e5';
+        ctx.lineWidth = 2.5;
+        ctx.setLineDash([]);
+
+        vadPoints.forEach((pt, index) => {
+            const p = projectionFn(pt);
+            if (index === 0) ctx.moveTo(p.x, p.y);
+            else ctx.lineTo(p.x, p.y);
+        });
+        ctx.stroke();
+
+        vadPoints.forEach((pt, index) => {
+            const p = projectionFn(pt);
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+
+            if (pt.is_critical) {
+                ctx.fillStyle = '#f59e0b';
+                ctx.strokeStyle = '#b45309';
+            } else if (index === vadPoints.length - 1) {
+                ctx.fillStyle = '#ef4444';
+                ctx.strokeStyle = '#991b1b';
+            } else {
+                ctx.fillStyle = '#4f46e5';
+                ctx.strokeStyle = '#312e81';
+            }
+
+            ctx.lineWidth = 2;
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#1e293b';
+            ctx.font = 'bold 11px Segoe UI';
+            ctx.fillText(pt.label, p.x + 10, p.y - 4);
+        });
+      }
+
+      drawDual2DScene();
+
+    } catch (err) {
+      console.error("Error al renderizar las gráficas en el reporte:", err);
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SOCIUS</title>
+    <link rel="icon" type="image/png" href="imgs/logo.png">
+    <link rel="stylesheet" href="css/indexStyle.css">
+</head>
+<body>
+
+    <header>
+        <img src="imgs/purplesocius.png" alt="Socius">
+    </header>
+
+    <div class="chat-box">
+        <div class="chat-header">
+            <span class="chat-title">Socius Assistant</span>
+            <div class="status-badge">
+                <span class="status-dot"></span> En vivo
+            </div>
+        </div>
+        
+        <div class="messages" id="msgs">
+            <div class="msg bot">
+                Hola, bienvenido a Socius. Estoy aquí para acompañarte. ¿De qué te gustaría hablar hoy?
+                
+                <!-- OPCIONES DE INICIO RÁPIDO -->
+                <div class="quick-prompts">
+                    <div class="prompt-card" onclick="sendQuick('Me siento algo estresado hoy')">
+                        Me siento algo estresado hoy
+                    </div>
+                    <div class="prompt-card" onclick="sendQuick('Quiero hablar sobre mi jornada de trabajo')">
+                        Quiero hablar sobre mi jornada de trabajo
+                    </div>
+                    <div class="prompt-card" onclick="sendQuick('Necesito un momento para recuperar la calma')">
+                        Necesito un momento para recuperar la calma
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- INDICADOR DE ESTADO -->
+        <div class="typing-indicator" id="typing">Socius está procesando...</div>
+
+        <!-- ÁREA DE ENTRADA -->
+        <div class="input-area">
+            <div class="input-row">
+                <input type="text" id="txt" placeholder="Escribe tu mensaje..." autocomplete="off" onkeydown="if(event.key==='Enter') send()">
+                <button class="btn-send" onclick="send()">Enviar</button>
+            </div>
+            
+            <div class="toolbar" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 13px; color: #64748b;">
+                <span id="sessionInfo">Sesión activa</span>
+                <div>
+                    <button class="btn-clear" onclick="clearChat()" style="background: none; border: none; color: #64748b; cursor: pointer; margin-right: 10px;">Reiniciar chat</button>
+                    <button onclick="endSession()" style="background-color: #fee2e2; color: #dc2626; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-weight: bold;">Finalizar sesión</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mostrar el pseudónimo activo en la barra al cargar la página
+        window.addEventListener('DOMContentLoaded', () => {
+            const currentPseudonym = localStorage.getItem('socius_pseudonym');
+            if (currentPseudonym) {
+                document.getElementById('sessionInfo').textContent = `Participante: ${currentPseudonym}`;
+            } else {
+                // Si alguien entra directo al chat sin pasar por el login, lo regresamos al inicio
+                window.location.href = "/";
+            }
+        });
+
+        function sendQuick(text) {
+            document.getElementById('txt').value = text;
+            send();
+        }
+
+        function clearChat() {
+            document.getElementById('msgs').innerHTML = `
+                <div class="msg bot">
+                    Nueva sesión iniciada. ¿En qué te puedo ayudar ahora?
+                </div>
+            `;
+        }
+
+        function endSession() {
+            if (confirm("¿Estás seguro de finalizar la sesión? Recuerda guardar tu pseudónimo si deseas reingresar en los siguientes días.")) {
+                // 1. Limpiar el almacenamiento local
+                localStorage.removeItem('socius_pseudonym');
+                
+                // 2. Redirigir a la pantalla de agradecimiento
+                window.location.replace('/thanks');
+            }
+        }
+
+        async function send() {
+            const txt = document.getElementById('txt');
+            const msgs = document.getElementById('msgs');
+            const typing = document.getElementById('typing');
+            
+            if(!txt.value.trim()) return;
+            
+            const userVal = txt.value;
+            
+            msgs.innerHTML += `<div class="msg user">${userVal}</div>`;
+            txt.value = '';
+            msgs.scrollTop = msgs.scrollHeight;
+
+            typing.style.display = 'block';
+
+            const currentPseudonym = localStorage.getItem('socius_pseudonym') || '';
+
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ 
+                        message: userVal,
+                        pseudonym: currentPseudonym 
+                    })
+                });
+                
+                const data = await res.json();
+                
+                typing.style.display = 'none';
+                msgs.innerHTML += `<div class="msg bot">${data.response}</div>`;
+            } catch (error) {
+                typing.style.display = 'none';
+                msgs.innerHTML += `<div class="msg bot" style="color: #ef4444;">No se pudo conectar con el servidor.</div>`;
+            }
+
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+    </script>
+</body>
+</html>

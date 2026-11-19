@@ -1,0 +1,185 @@
+body { 
+    font-family: 'Segoe UI', sans-serif; 
+    background: #b39ddb; 
+    color: white; 
+    margin: 0; 
+    padding: 15px; 
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+    gap: 15px; 
+    height: 100vh;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* ENCABEZADO PRINCIPAL */
+.main-header {
+    width: 100%;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.main-header img {
+    height: 70px;
+    max-width: 100%;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
+
+/* CONTENEDOR PRINCIPAL */
+.dashboard-container {
+    display: flex;
+    width: 100%;
+    flex: 1; 
+    gap: 20px;
+    min-height: 0;
+}
+
+.panel { 
+    background-color: #b39ddb;
+    color: #ffffff;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15); 
+    border: 4px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 20px; 
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.panel-left {
+    width: 300px;
+    flex-shrink: 0;
+    overflow-y: auto; 
+}
+
+.panel-right {
+    flex: 1; /* Se estira de forma fluida para ocupar el resto del ancho */
+    min-width: 0;
+}
+
+/* IMÁGENES INTERNAS DE LOS PANELES */
+.panel-left-img {
+    width: 100%;
+    max-height: 25px;
+    object-fit: contain;
+    margin-bottom: 12px;
+    display: block;
+}
+
+.panel-right-img {
+    max-width: 50%;
+    height: auto;
+    display: block;
+    margin: 0 auto 10px auto;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+/* CONTENEDOR DE LA GRÁFICA */
+.chart-container { 
+    position: relative; 
+    width: 100%; 
+    height: 100%; /* Llena dinámicamente el panel derecho */
+    min-height: 250px; 
+    flex: 1;
+}
+
+.card { 
+    background-color: #605db3; 
+    color: #fcf8fc; 
+    padding: 12px 15px; 
+    border-radius: 8px; 
+    margin-bottom: 8px;
+}
+
+.val { 
+    font-size: 1.3rem; 
+    font-weight: bold; 
+    color: #38bdf8;
+}
+
+#vadChart {
+    background-color: #ebedfc; 
+    border-radius: 8px; 
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.legend-box {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 12px 16px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 11px;
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+    z-index: 10;
+}
+
+.legend-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #0f172a;
+    border-bottom: 1px solid #cbd5e1;
+    padding-bottom: 4px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.legend-item:last-child {
+    margin-bottom: 0;
+}
+
+/* Indicadores circulares (Puntos) */
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+
+.legend-dot--active {
+    background: #ef4444;
+    border: 1px solid #991b1b;
+}
+
+.legend-dot--previous {
+    background: #4f46e5;
+    border: 1px solid #312e81;
+}
+
+.legend-dot--critical {
+    background: #f59e0b;
+    border: 1px solid #b45309;
+}
+
+/* Indicadores lineales (Trayectoria y Guías) */
+.legend-line {
+    width: 16px;
+    display: inline-block;
+    margin-right: 6px;
+    flex-shrink: 0;
+}
+
+.legend-line--path {
+    height: 2px;
+    background: #4f46e5;
+}
+
+.legend-line--guide {
+    height: 1px;
+    border-top: 1px dashed #6366f1;
+}

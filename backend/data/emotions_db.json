@@ -4,6 +4,7 @@
         "category": "Joy",
         "v": 1.0,
         "a": 0.95,
+        "d": 0.8,
         "description": "Máximo estado de alegría y deleite abrumador.",
         "keywords": [
             "no puedo creerlo estoy feliz",
@@ -18,6 +19,7 @@
         "category": "Joy",
         "v": 0.8,
         "a": 0.6,
+        "d": 0.7,
         "description": "Sentimiento de satisfacción y felicidad viva.",
         "keywords": [
             "me siento feliz",
@@ -32,6 +34,7 @@
         "category": "Joy",
         "v": 0.6,
         "a": -0.6,
+        "d": 0.5,
         "description": "Estado de calma, paz y tranquilidad.",
         "keywords": [
             "me siento tranquilo",
@@ -46,6 +49,7 @@
         "category": "Sadness",
         "v": -1.0,
         "a": -0.4,
+        "d": -0.8,
         "description": "Estado intenso de tristeza; pérdida profunda.",
         "keywords": [
             "siento un vacio enorme",
@@ -60,6 +64,7 @@
         "category": "Sadness",
         "v": -0.7,
         "a": -0.6,
+        "d": -0.6,
         "description": "Sentimiento de desánimo y decepción.",
         "keywords": [
             "me siento triste",
@@ -74,6 +79,7 @@
         "category": "Sadness",
         "v": -0.4,
         "a": -0.7,
+        "d": -0.2,
         "description": "Estado reflexivo y ligeramente triste.",
         "keywords": [
             "he estado pensando mucho",
@@ -88,6 +94,7 @@
         "category": "Fear",
         "v": -0.95,
         "a": 1.0,
+        "d": -0.9,
         "description": "Miedo intenso y pánico paralizante.",
         "keywords": [
             "estoy aterrorizado",
@@ -102,6 +109,7 @@
         "category": "Fear",
         "v": -0.8,
         "a": 0.8,
+        "d": -0.7,
         "description": "Sensación de angustia por un riesgo real o imaginario.",
         "keywords": [
             "tengo miedo",
@@ -116,6 +124,7 @@
         "category": "Fear",
         "v": -0.6,
         "a": 0.5,
+        "d": -0.4,
         "description": "Inquietud o recelo ante lo que pueda suceder.",
         "keywords": [
             "estoy nervioso",
@@ -130,6 +139,7 @@
         "category": "Anger",
         "v": -0.85,
         "a": 0.95,
+        "d": 0.6,
         "description": "Rabia violenta y furia desatada.",
         "keywords": [
             "estoy furioso",
@@ -144,6 +154,7 @@
         "category": "Anger",
         "v": -0.7,
         "a": 0.8,
+        "d": 0.4,
         "description": "Sentimiento de irritación y frustración.",
         "keywords": [
             "estoy molesto",
@@ -158,6 +169,7 @@
         "category": "Anger",
         "v": -0.5,
         "a": 0.5,
+        "d": 0.1,
         "description": "Ligera irritación o incomodidad.",
         "keywords": [
             "esto me irrita",
@@ -172,6 +184,7 @@
         "category": "Trust",
         "v": 0.9,
         "a": 0.3,
+        "d": 0.2,
         "description": "Aprecio profundo y respeto por alguien.",
         "keywords": [
             "lo admiro mucho",
@@ -186,6 +199,7 @@
         "category": "Trust",
         "v": 0.8,
         "a": 0.2,
+        "d": 0.6,
         "description": "Seguridad y esperanza en alguien o algo.",
         "keywords": [
             "confio en esto",
@@ -200,6 +214,7 @@
         "category": "Trust",
         "v": 0.6,
         "a": -0.2,
+        "d": 0.3,
         "description": "Aprobar o recibir voluntariamente una situación.",
         "keywords": [
             "lo acepto",
@@ -214,6 +229,7 @@
         "category": "Disgust",
         "v": -0.9,
         "a": 0.3,
+        "d": 0.5,
         "description": "Falta de afecto o consideración; asco.",
         "keywords": [
             "esto es repugnante",
@@ -228,6 +244,7 @@
         "category": "Disgust",
         "v": -0.7,
         "a": 0.2,
+        "d": 0.2,
         "description": "Rechazo fuerte hacia algo o alguien.",
         "keywords": [
             "no me gusta nada",
@@ -242,6 +259,7 @@
         "category": "Disgust",
         "v": -0.3,
         "a": -0.6,
+        "d": -0.3,
         "description": "Cansancio por falta de interés o estímulos.",
         "keywords": [
             "estoy aburrido",
@@ -256,6 +274,7 @@
         "category": "Surprise",
         "v": 0.5,
         "a": 0.9,
+        "d": -0.2,
         "description": "Sorpresa extrema ante algo inesperado.",
         "keywords": [
             "wow que impresionante",
@@ -270,6 +289,7 @@
         "category": "Surprise",
         "v": 0.2,
         "a": 0.7,
+        "d": -0.1,
         "description": "Alteración por un evento imprevisto.",
         "keywords": [
             "no me lo esperaba",
@@ -284,6 +304,7 @@
         "category": "Surprise",
         "v": 0.0,
         "a": 0.2,
+        "d": -0.3,
         "description": "Dificultad para concentrarse por nuevos estímulos.",
         "keywords": [
             "no puedo concentrarme",
@@ -298,6 +319,7 @@
         "category": "Anticipation",
         "v": 0.3,
         "a": 0.7,
+        "d": 0.4,
         "description": "Atención extrema ante el entorno.",
         "keywords": [
             "estoy muy atento",
@@ -312,6 +334,7 @@
         "category": "Anticipation",
         "v": 0.2,
         "a": 0.4,
+        "d": 0.3,
         "description": "Expectativa de lo que va a suceder.",
         "keywords": [
             "estoy esperando algo",
@@ -326,6 +349,7 @@
         "category": "Anticipation",
         "v": 0.2,
         "a": 0.3,
+        "d": 0.3,
         "description": "Curiosidad o atención hacia algo.",
         "keywords": [
             "me interesa esto",

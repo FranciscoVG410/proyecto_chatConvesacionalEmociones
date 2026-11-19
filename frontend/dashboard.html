@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SOCIUS PULSE</title>
+    <link rel="icon" type="image/png" href="imgs/logo.png">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/dashStyle.css">
+    <!-- Plugin de anotaciones para rellenar cuadrantes/zonas -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+</head>
+<body>
+
+    <!-- ENCABEZADO PRINCIPAL -->
+    <header class="main-header">
+        <img src="imgs/sociuspulsenew.png" alt="Socius - Monitoreo Emocional VAD">
+    </header>
+
+    <!-- CONTENEDOR DE PANELES -->
+    <div class="dashboard-container">
+        
+        <!-- PANEL DE TELEMETRÍA -->
+        <div class="panel panel-left">
+            <img src="imgs/purpletele.png" alt="Telemetría VAD" class="panel-left-img">
+            
+            <div class="card">
+                <small>Último mensaje:</small>
+                <div id="txt-prompt" style="font-style: italic; color: #f8fafc;">Esperando datos...</div>
+            </div>
+            <div class="card">
+                <small>Emoción Predominante:</small>
+                <div id="txt-emotion" class="val">---</div>
+            </div>
+            <div class="card">
+                <small>Coordenadas (Valence, Arousal, Dominance):</small>
+                <div id="txt-coords" class="val">V: 0.00 | A: 0.00 | D: 0.00</div>
+            </div>
+            <div class="card">
+                <small>Distancia a Serenidad:</small>
+                <div id="txt-distance" class="val">0.00</div>
+            </div>
+            <div style="margin-top: 15px; text-align: center;">
+                <button id="btn-generate-report" 
+                        onclick="goToReport()"
+                        style="background-color: #0d9488; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 100%;">
+                    GENERAR REPORTE
+                </button>
+            </div>
+        </div>
+
+        <!-- PANEL DE LA GRÁFICA -->
+        <div class="panel panel-right">
+            <img src="imgs/purpletrayecto.png" alt="Socius" class="panel-right-img">
+            
+            <!-- SWITCH DE CAMBIO DE VISTA (2D / 3D) -->
+            <div style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 10px; padding: 0 10px;">
+                <span style="font-size: 12px; font-weight: bold; color: #475569; margin-right: 10px;">Modo de Vista:</span>
+                <button id="btn-toggle-view" onclick="toggleViewMode()" 
+                        style="background: #4f46e5; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    Vista: Cubo 3D
+                </button>
+            </div>
+
+            <div class="chart-container" style="position: relative;">
+                <canvas id="vadChart"></canvas>
+                
+                <!-- SIMBOLOGÍA DE LA GRÁFICA -->
+                <div id="legend-box" class="legend-box">
+                    <div class="legend-title">Simbología VAD</div>
+                    <div class="legend-item">
+                        <span class="legend-dot legend-dot--active"></span>
+                        <span>Último Punto (Activo)</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot legend-dot--previous"></span>
+                        <span>Puntos Anteriores</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot legend-dot--critical"></span>
+                        <span>Punto Crítico (Alerta)</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-line legend-line--path"></span>
+                        <span>Trayectoria</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-line legend-line--guide"></span>
+                        <span>Líneas Guía (Ejes)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const canvas = document.getElementById('vadChart');
+        const ctx = canvas.getContext('2d');
+
+        let historyPoints = [];
+        let is3DMode = true;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const forcedPseudonym = (urlParams.get('pseudonym') || '').trim().toUpperCase();
+        const storedPseudonym = (localStorage.getItem('socius_pseudonym') || '').trim().toUpperCase();
+        let selectedPseudonym = forcedPseudonym || storedPseudonym || "";
+        const isPseudonymLocked = Boolean(forcedPseudonym || storedPseudonym);
+
+        function normalizePseudo(raw) {
+            return (raw || '').trim().toUpperCase();
+        }
+
+        function shouldAcceptPoint(pseudo, allowAutoLock = true) {
+            const clean = normalizePseudo(pseudo);
+            if (!selectedPseudonym) {
+                if (!allowAutoLock || !clean || clean === "ANÓNIMO") {
+                    return false;
+                }
+                selectedPseudonym = clean;
+                return true;
+            }
+            if (!isPseudonymLocked && clean && clean !== "ANÓNIMO" && clean !== selectedPseudonym) {
+                selectedPseudonym = clean;
+                historyPoints = [];
+                return true;
+            }
+            return clean === selectedPseudonym;
+        }
+
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            drawScene();
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        function toggleViewMode() {
+            is3DMode = !is3DMode;
+            const btn = document.getElementById('btn-toggle-view');
+            btn.innerText = is3DMode ? 'Vista: Cubo 3D' : 'Vista: Planos 2D (V-A / D-A)';
+            btn.style.backgroundColor = is3DMode ? '#4f46e5' : '#0d9488';
+            drawScene();
+        }
+
+        // Proyección 3D a 2D usando la proyección de Cabinet
+        function project3DToCabinet(v, a, d) {
+            const width = canvas.width;
+            const height = canvas.height;
+            const scale = Math.min(width, height) * 0.30; 
+
+            const centerX = width / 2 - 50;
+            const centerY = height / 2 + 60;
+
+            const angle = Math.PI / 4; 
+            const depthFactor = 0.45;  
+
+            const depthShift = (d + 1) * scale * depthFactor;
+
+            const xScreen = centerX + (v * scale) + (depthShift * Math.cos(angle));
+            const yScreen = centerY - (a * scale) - (depthShift * Math.sin(angle));
+
+            return { x: xScreen, y: yScreen };
+        }
+
+        function drawScene() {
+            if (is3DMode) {
+                draw3DCubeScene();
+            } else {
+                drawDual2DScene();
+            }
+        }
+
+        // Renderizado Vista 2D DUAL
+        function drawDual2DScene() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const width = canvas.width;
+            const height = canvas.height;
+
+            const boxSize = Math.min(width * 0.38, height * 0.65);
+            const scale = boxSize / 2;
+
+            const centerLeftX = width * 0.28;
+            const centerRightX = width * 0.72;
+            const centerY = height * 0.52;
+
+            // PLANO 1: Valencia (X) vs Activación (Y)
+            drawCartesianAxes(centerLeftX, centerY, scale, 'Valencia (V)', 'Activación (A)');
+            drawPointsAndPath2D((pt) => ({
+                x: centerLeftX + (pt.v * scale),
+                y: centerY - (pt.a * scale)
+            }));
+
+            // PLANO 2: Dominancia (X) vs Activación (Y)
+            drawCartesianAxes(centerRightX, centerY, scale, 'Dominancia (D)', 'Activación (A)');
+            drawPointsAndPath2D((pt) => ({
+                x: centerRightX + (pt.d * scale),
+                y: centerY - (pt.a * scale)
+            }));
+        }
+
+        // Dibuja estrictamente los ejes de la gráfica cartesiana (sin el cuadro contenedor)
+        function drawCartesianAxes(centerX, centerY, scale, labelX, labelY) {
+            ctx.save();
+            ctx.strokeStyle = '#64748b';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([]);
+
+            // Eje X principal (Horizontal)
+            ctx.beginPath();
+            ctx.moveTo(centerX - scale, centerY);
+            ctx.lineTo(centerX + scale, centerY);
+            ctx.stroke();
+
+            // Eje Y principal (Vertical)
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY - scale);
+            ctx.lineTo(centerX, centerY + scale);
+            ctx.stroke();
+
+            ctx.restore();
+
+            // Etiquetas de Ejes en los extremos
+            ctx.fillStyle = '#334155';
+            ctx.font = 'bold 11px Segoe UI';
+            ctx.fillText(labelX, centerX + scale - 35, centerY + 18);
+            ctx.fillText(labelY, centerX - 35, centerY - scale - 8);
+        }
+
+        // Función para renderizar puntos y trayectoria en 2D
+        function drawPointsAndPath2D(projectionFn) {
+            if (historyPoints.length === 0) return;
+
+            // Trayectoria
+            ctx.beginPath();
+            ctx.strokeStyle = '#4f46e5';
+            ctx.lineWidth = 2.5;
+            ctx.setLineDash([]);
+
+            historyPoints.forEach((pt, index) => {
+                const p = projectionFn(pt);
+                if (index === 0) ctx.moveTo(p.x, p.y);
+                else ctx.lineTo(p.x, p.y);
+            });
+            ctx.stroke();
+
+            // Nodos
+            historyPoints.forEach((pt, index) => {
+                const p = projectionFn(pt);
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+
+                if (pt.isCritical) {
+                    ctx.fillStyle = '#f59e0b';
+                    ctx.strokeStyle = '#b45309';
+                } else if (index === historyPoints.length - 1) {
+                    ctx.fillStyle = '#ef4444';
+                    ctx.strokeStyle = '#991b1b';
+                } else {
+                    ctx.fillStyle = '#4f46e5';
+                    ctx.strokeStyle = '#312e81';
+                }
+
+                ctx.lineWidth = 2;
+                ctx.fill();
+                ctx.stroke();
+            });
+        }
+
+        // Renderizado Vista Cubo 3D
+        function draw3DCubeScene() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const rawCorners = [
+                {v: -1, a: -1, d: -1}, {v: 1, a: -1, d: -1}, {v: 1, a: 1, d: -1}, {v: -1, a: 1, d: -1}, 
+                {v: -1, a: -1, d:  1}, {v: 1, a: -1, d:  1}, {v: 1, a: 1, d:  1}, {v: -1, a: 1, d:  1}  
+            ];
+
+            const vertices = rawCorners.map(c => project3DToCabinet(c.v, c.a, c.d));
+
+            const edges = [
+                [0,1], [1,2], [2,3], [3,0], 
+                [4,5], [5,6], [6,7], [7,4], 
+                [0,4], [1,5], [2,6], [3,7]  
+            ];
+
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#16a34a';
+            ctx.setLineDash([]);
+
+            edges.forEach((edge) => {
+                const p1 = vertices[edge[0]];
+                const p2 = vertices[edge[1]];
+                
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.stroke();
+            });
+
+            // Cruz central de referencia
+            ctx.save();
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 4]);
+
+            const vAxisStart = project3DToCabinet(-1, 0, -1);
+            const vAxisEnd = project3DToCabinet(1, 0, -1);
+            ctx.beginPath(); ctx.moveTo(vAxisStart.x, vAxisStart.y); ctx.lineTo(vAxisEnd.x, vAxisEnd.y); ctx.stroke();
+
+            const aAxisStart = project3DToCabinet(0, -1, -1);
+            const aAxisEnd = project3DToCabinet(0, 1, -1);
+            ctx.beginPath(); ctx.moveTo(aAxisStart.x, aAxisStart.y); ctx.lineTo(aAxisEnd.x, aAxisEnd.y); ctx.stroke();
+
+            const dAxisStart = project3DToCabinet(0, 0, -1);
+            const dAxisEnd = project3DToCabinet(0, 0, 1);
+            ctx.beginPath(); ctx.moveTo(dAxisStart.x, dAxisStart.y); ctx.lineTo(dAxisEnd.x, dAxisEnd.y); ctx.stroke();
+
+            ctx.restore();
+
+            // Etiquetas
+            ctx.fillStyle = '#334155';
+            ctx.font = 'bold 11px Segoe UI';
+
+            const labelV = project3DToCabinet(0, -1, -1);
+            ctx.fillText('Valencia (V)', labelV.x - 25, labelV.y + 18);
+
+            const labelA = project3DToCabinet(-1, 0, -1);
+            ctx.fillText('Activación (A)', labelA.x - 75, labelA.y + 4);
+
+            const labelD = project3DToCabinet(1, 1, 0);
+            ctx.fillText('Dominancia (D)', labelD.x + 12, labelD.y);
+
+            // Trayectoria 3D y Guías
+            drawPointsAndPath3D();
+        }
+
+        function drawPointsAndPath3D() {
+            if (historyPoints.length === 0) return;
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#4f46e5';
+            ctx.lineWidth = 2.5;
+            ctx.setLineDash([]);
+
+            historyPoints.forEach((pt, index) => {
+                const projected = project3DToCabinet(pt.v, pt.a, pt.d);
+                if (index === 0) ctx.moveTo(projected.x, projected.y);
+                else ctx.lineTo(projected.x, projected.y);
+            });
+            ctx.stroke();
+
+            historyPoints.forEach((pt, index) => {
+                const p = project3DToCabinet(pt.v, pt.a, pt.d);
+                const pFloor = project3DToCabinet(pt.v, -1, pt.d);
+                const pWall = project3DToCabinet(-1, pt.a, pt.d);
+
+                ctx.save();
+                ctx.setLineDash([3, 3]);
+                ctx.strokeStyle = 'rgba(79, 70, 229, 0.45)';
+                ctx.lineWidth = 1;
+
+                ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(pFloor.x, pFloor.y); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(pWall.x, pWall.y); ctx.stroke();
+                ctx.restore();
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+
+                if (pt.isCritical) {
+                    ctx.fillStyle = '#f59e0b';
+                    ctx.strokeStyle = '#b45309';
+                } else if (index === historyPoints.length - 1) {
+                    ctx.fillStyle = '#ef4444';
+                    ctx.strokeStyle = '#991b1b';
+                } else {
+                    ctx.fillStyle = '#4f46e5';
+                    ctx.strokeStyle = '#312e81';
+                }
+
+                ctx.lineWidth = 2;
+                ctx.fill();
+                ctx.stroke();
+            });
+        }
+
+        function processPoint(item, allowAutoLock = true) {
+            const dataObj = item.point || item.data || item;
+            const itemPseudo = dataObj.pseudonym || item.pseudonym || "";
+
+            if (!shouldAcceptPoint(itemPseudo, allowAutoLock)) {
+                return;
+            }
+
+            const userMsg = dataObj.user_msg || dataObj.user_prompt || dataObj.prompt || "Sin mensaje";
+            const emotion = dataObj.emotion || "---";
+            
+            const v = parseFloat(dataObj.v !== undefined ? dataObj.v : (dataObj.x || 0));
+            const a = parseFloat(dataObj.a !== undefined ? dataObj.a : (dataObj.y || 0));
+            const d = parseFloat(dataObj.d !== undefined ? dataObj.d : (dataObj.z || 0));
+            const isCritical = dataObj.is_critical || false;
+
+            const distance = Math.sqrt(
+                Math.pow(v - 0.6, 2) + 
+                Math.pow(a - (-0.6), 2) + 
+                Math.pow(d - 0.5, 2)
+            );
+
+            document.getElementById('txt-prompt').innerText = `"${userMsg}"`;
+            document.getElementById('txt-emotion').innerText = isCritical ? `${emotion} (ALERTA)` : emotion;
+            document.getElementById('txt-coords').innerText = `V: ${v.toFixed(2)} | A: ${a.toFixed(2)} | D: ${d.toFixed(2)}`;
+            document.getElementById('txt-distance').innerText = distance.toFixed(2);
+
+            historyPoints.push({ v, a, d, isCritical });
+            drawScene();
+        }
+
+        async function fetchHistory() {
+            try {
+                const response = await fetch('/api/history');
+                const data = await response.json();
+                if (data.history && data.history.length > 0) {
+                    historyPoints = [];
+                    if (!selectedPseudonym) {
+                        const validRecords = data.history.filter(
+                            r => normalizePseudo(r.pseudonym) && normalizePseudo(r.pseudonym) !== "ANÓNIMO"
+                        );
+                        if (validRecords.length > 0) {
+                            selectedPseudonym = normalizePseudo(validRecords[validRecords.length - 1].pseudonym);
+                        }
+                    }
+                    data.history.forEach(record => processPoint(record, false));
+                    drawScene();
+                } else {
+                    resizeCanvas();
+                }
+            } catch (e) {
+                console.error("Error al cargar historial:", e);
+                resizeCanvas();
+            }
+        }
+
+        setTimeout(resizeCanvas, 100);
+        fetchHistory();
+
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const ws = new WebSocket(`${wsProtocol}//${window.location.host}/ws/analytics`);
+        ws.onmessage = function(event) {
+            const rawData = JSON.parse(event.data);
+            const item = rawData.point || rawData.data || rawData;
+            processPoint(item, true);
+        };
+
+        function goToReport() {
+            const pseudonymToUse = selectedPseudonym || localStorage.getItem('socius_pseudonym') || '';
+            const reportUrl = pseudonymToUse 
+                ? `/api/report?pseudonym=${encodeURIComponent(pseudonymToUse)}` 
+                : '/api/report';
+            window.open(reportUrl, '_blank');
+        }
+    </script>
+</body>
+</html>

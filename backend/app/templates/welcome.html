@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acceso al Estudio - Socius</title>
+  <link rel="stylesheet" href="/css/welcomeStyle.css">
+</head>
+<body>
+
+  <div class="card">
+    <h2>Estudio Psicométrico Socius</h2>
+    <p class="subtitle">Selecciona una opción para continuar con tu sesión.</p>
+
+    <!-- Botones de selección de modo -->
+    <div id="modeSelector" style="display: flex; gap: 10px; margin-bottom: 20px;">
+      <button type="button" id="btnNew" class="btn-submit" onclick="showNewForm()">Nuevo Participante</button>
+      <button type="button" id="btnReturning" class="btn-submit" style="background-color: #64748b;" onclick="showReturningForm()">Ya tengo pseudónimo</button>
+    </div>
+
+    <!-- Formulario para Nuevo Usuario -->
+    <form id="newParticipantForm" style="display: none;">
+      <div class="pseudonym-box" style="padding: 10px; background: #f8fafc; border-radius: 6px; margin-bottom: 15px; text-align: center;">
+        <small style="display:block; color:#64748b; margin-bottom:4px;">Tu pseudónimo asignado:</small>
+        <span id="pseudonymText" style="font-weight: bold; font-size: 1.1em; color: #4f46e5;">Generando...</span>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label for="age" style="display:block; margin-bottom:5px;">Edad:</label>
+        <input type="number" id="age" name="age" min="10" max="120" required placeholder="Ej. 25" style="width: 100%; padding: 8px; box-sizing: border-box;">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label for="gender" style="display:block; margin-bottom:5px;">Género:</label>
+        <select id="gender" name="gender" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+          <option value="" disabled selected>Selecciona una opción</option>
+          <option value="Hombre">Hombre</option>
+          <option value="Mujer">Mujer</option>
+          <option value="No binario">No binario</option>
+          <option value="Prefiero no decirlo">Prefiero no decirlo</option>
+        </select>
+      </div>
+
+      <button type="submit" id="submitNewBtn" class="btn-submit" disabled style="width: 100%; padding: 10px; background: #4f46e5; color: white; border: none; border-radius: 6px; cursor: pointer;">Registrarse y Comenzar</button>
+    </form>
+
+    <!-- Formulario para Usuario Recurrente -->
+    <form id="returningForm" style="display: none;">
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label for="existingPseudonym" style="display:block; margin-bottom:5px;">Ingresa tu pseudónimo (Ej. LOBO AZUL):</label>
+        <input type="text" id="existingPseudonym" name="existingPseudonym" required placeholder="ANIMAL COLOR" style="text-transform: uppercase; width: 100%; padding: 8px; box-sizing: border-box;">
+      </div>
+      <button type="submit" class="btn-submit" style="width: 100%; padding: 10px; background: #4f46e5; color: white; border: none; border-radius: 6px; cursor: pointer;">Continuar Sesión</button>
+    </form>
+  </div>
+
+  <script>
+    let assignedPseudonym = "";
+
+    function showNewForm() {
+      document.getElementById('modeSelector').style.display = 'none';
+      document.getElementById('newParticipantForm').style.display = 'block';
+      fetchUniquePseudonym();
+    }
+
+    function showReturningForm() {
+      document.getElementById('modeSelector').style.display = 'none';
+      document.getElementById('returningForm').style.display = 'block';
+    }
+
+    async function fetchUniquePseudonym() {
+      try {
+        const response = await fetch('/api/generate-pseudonym');
+        const data = await response.json();
+        if (response.ok) {
+          assignedPseudonym = data.pseudonym;
+          document.getElementById('pseudonymText').textContent = assignedPseudonym;
+          const btn = document.getElementById('submitNewBtn');
+          btn.disabled = false;
+          btn.textContent = "Registrarse y Comenzar";
+        } else {
+          alert("Error al generar pseudónimo: " + data.detail);
+        }
+      } catch (err) {
+        console.error(err);
+        document.getElementById('pseudonymText').textContent = "Error de conexión";
+      }
+    }
+
+    // Enviar registro nuevo
+    document.getElementById('newParticipantForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      if (!assignedPseudonym) {
+        alert("El pseudónimo aún no se ha generado. Espera un momento.");
+        return;
+      }
+
+      const payload = {
+        pseudonym: assignedPseudonym,
+        age: parseInt(document.getElementById('age').value),
+        gender: document.getElementById('gender').value
+      };
+
+      try {
+        const res = await fetch('/api/register-participant', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const resultData = await res.json();
+
+        if (res.ok) {
+          localStorage.setItem('socius_pseudonym', assignedPseudonym);
+          window.location.href = "/chat-app";
+        } else {
+          alert("Error en el registro: " + (resultData.detail || "Desconocido"));
+        }
+      } catch (error) {
+        console.error("Error de red:", error);
+        alert("No se pudo conectar con el servidor para registrar el usuario.");
+      }
+    });
+
+    // Enviar acceso recurrente
+    document.getElementById('returningForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const pseudonymVal = document.getElementById('existingPseudonym').value.trim().toUpperCase();
+
+      try {
+        const res = await fetch('/api/login-participant', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pseudonym: pseudonymVal })
+        });
+
+        const resultData = await res.json();
+
+        if (res.ok) {
+          localStorage.setItem('socius_pseudonym', pseudonymVal);
+          window.location.href = "/chat-app";
+        } else {
+          alert("Error: " + (resultData.detail || "Pseudónimo no encontrado"));
+        }
+      } catch (error) {
+        console.error("Error de red:", error);
+        alert("No se pudo conectar con el servidor.");
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 import streamlit as st
 from groq import Groq
-from src.rag_engine import EmotionRAGEngine
-from src.vad_processor import VADTracker
+from backend.app.src.rag_engine import EmotionRAGEngine
+from backend.app.src.vad_processor import VADTracker
 import os
 from dotenv import load_dotenv
 import matplotlib.pyplot as plt
@@ -150,3 +150,4 @@ with st.sidebar:
     ax.set_yticks([])
 
     st.pyplot(fig, use_container_width=True)
+    

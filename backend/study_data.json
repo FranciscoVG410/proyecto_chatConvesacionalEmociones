@@ -1,0 +1,542 @@
+{
+    "participants": [
+        {
+            "pseudonym": "TIGRE AZUL",
+            "age": 21,
+            "gender": "Hombre",
+            "created_at": "2026-11-05 23:54:23"
+        },
+        {
+            "pseudonym": "ZORRO PLATEADO",
+            "age": 22,
+            "gender": "Hombre",
+            "created_at": "2026-11-06 23:15:26"
+        },
+        {
+            "pseudonym": "TIGRE ESMERALDA",
+            "age": 44,
+            "gender": "Hombre",
+            "created_at": "2026-11-06 23:28:23"
+        },
+        {
+            "pseudonym": "DELFÍN ÍNDIGO",
+            "age": 22,
+            "gender": "Mujer",
+            "created_at": "2026-11-06 23:36:12"
+        },
+        {
+            "pseudonym": "BÚHO VIOLETA",
+            "age": 22,
+            "gender": "Hombre",
+            "created_at": "2026-11-07 23:38:47"
+        },
+        {
+            "pseudonym": "JAGUAR AZUL",
+            "age": 22,
+            "gender": "Mujer",
+            "created_at": "2026-11-07 23:41:33"
+        },
+        {
+            "pseudonym": "BÚHO TURQUESA",
+            "age": 88,
+            "gender": "Mujer",
+            "created_at": "2026-11-07 23:44:57"
+        },
+        {
+            "pseudonym": "ÁGUILA TURQUESA",
+            "age": 44,
+            "gender": "Mujer",
+            "created_at": "2026-11-07 23:46:23"
+        },
+        {
+            "pseudonym": "LOBO ROJO",
+            "age": 22,
+            "gender": "No binario",
+            "created_at": "2026-11-07 23:46:29"
+        },
+        {
+            "pseudonym": "LOBO PLATEADO",
+            "age": 11,
+            "gender": "Mujer",
+            "created_at": "2026-11-07 23:49:04"
+        },
+        {
+            "pseudonym": "DELFÍN AZUL",
+            "age": 88,
+            "gender": "Mujer",
+            "created_at": "2026-11-07 23:49:13"
+        },
+        {
+            "pseudonym": "CÓNDOR VIOLETA",
+            "age": 11,
+            "gender": "Mujer",
+            "created_at": "2026-11-07 23:51:38"
+        },
+        {
+            "pseudonym": "DELFÍN ÁMBAR",
+            "age": 11,
+            "gender": "Hombre",
+            "created_at": "2026-11-07 23:54:19"
+        },
+        {
+            "pseudonym": "BÚHO PLATEADO",
+            "age": 22,
+            "gender": "Mujer",
+            "created_at": "2026-11-07 23:54:51"
+        },
+        {
+            "pseudonym": "HALCÓN VIOLETA",
+            "age": 11,
+            "gender": "Hombre",
+            "created_at": "2026-11-08 00:08:51"
+        },
+        {
+            "pseudonym": "BÚHO DORADO",
+            "age": 11,
+            "gender": "Hombre",
+            "created_at": "2026-11-08 00:18:32"
+        },
+        {
+            "pseudonym": "PANTERA TURQUESA",
+            "age": 11,
+            "gender": "Hombre",
+            "created_at": "2026-11-08 00:20:07"
+        },
+        {
+            "pseudonym": "LOBO AZUL",
+            "age": 11,
+            "gender": "Hombre",
+            "created_at": "2026-11-08 00:22:52"
+        },
+        {
+            "pseudonym": "DELFÍN TURQUESA",
+            "age": 11,
+            "gender": "Hombre",
+            "created_at": "2026-11-08 00:26:02"
+        },
+        {
+            "pseudonym": "PANTERA ESMERALDA",
+            "age": 11,
+            "gender": "Hombre",
+            "created_at": "2026-11-08 00:28:16"
+        },
+        {
+            "pseudonym": "LOBO DORADO",
+            "age": 11,
+            "gender": "Hombre",
+            "created_at": "2026-11-08 00:32:52"
+        },
+        {
+            "pseudonym": "JAGUAR TURQUESA",
+            "age": 11,
+            "gender": "Hombre",
+            "created_at": "2026-11-08 00:35:22"
+        },
+        {
+            "pseudonym": "DELFÍN VIOLETA",
+            "age": 12,
+            "gender": "Hombre",
+            "created_at": "2026-11-08 00:38:24"
+        },
+        {
+            "pseudonym": "LOBO ÍNDIGO",
+            "age": 11,
+            "gender": "Mujer",
+            "created_at": "2026-11-08 01:11:30"
+        },
+        {
+            "pseudonym": "ZORRO DORADO",
+            "age": 11,
+            "gender": "Hombre",
+            "created_at": "2026-11-08 15:46:21"
+        },
+        {
+            "pseudonym": "LEÓN TURQUESA",
+            "age": 11,
+            "gender": "No binario",
+            "created_at": "2026-11-08 23:05:35"
+        },
+        {
+            "pseudonym": "OSO PLATEADO",
+            "age": 11,
+            "gender": "Hombre",
+            "created_at": "2026-11-09 00:09:14"
+        },
+        {
+            "pseudonym": "TIGRE ÁMBAR",
+            "age": 21,
+            "gender": "Hombre",
+            "created_at": "2026-11-09 00:09:34"
+        },
+        {
+            "pseudonym": "JAGUAR VERDE",
+            "age": 11,
+            "gender": "Hombre",
+            "created_at": "2026-11-09 02:09:05"
+        },
+        {
+            "pseudonym": "BÚHO ÍNDIGO",
+            "age": 11,
+            "gender": "No binario",
+            "created_at": "2026-11-09 02:09:54"
+        },
+        {
+            "pseudonym": "OSO VERDE",
+            "age": 11,
+            "gender": "Hombre",
+            "created_at": "2026-11-09 02:16:51"
+        },
+        {
+            "pseudonym": "PANTERA AZUL",
+            "age": 55,
+            "gender": "Hombre",
+            "created_at": "2026-11-09 02:25:59"
+        },
+        {
+            "pseudonym": "JAGUAR DORADO",
+            "age": 12,
+            "gender": "No binario",
+            "created_at": "2026-11-09 22:01:20"
+        },
+        {
+            "pseudonym": "PANTERA ROJO",
+            "age": 15,
+            "gender": "Mujer",
+            "created_at": "2026-11-09 22:39:06"
+        },
+        {
+            "pseudonym": "PANTERA VIOLETA",
+            "age": 11,
+            "gender": "Mujer",
+            "created_at": "2026-11-09 22:45:54"
+        },
+        {
+            "pseudonym": "BÚHO VERDE",
+            "age": 11,
+            "gender": "Hombre",
+            "created_at": "2026-11-11 18:02:11"
+        },
+        {
+            "pseudonym": "ÁGUILA ESMERALDA",
+            "age": 11,
+            "gender": "Hombre",
+            "created_at": "2026-11-11 20:15:43"
+        },
+        {
+            "pseudonym": "TIGRE PLATEADO",
+            "age": 11,
+            "gender": "No binario",
+            "created_at": "2026-11-12 23:14:15"
+        },
+        {
+            "pseudonym": "CÓNDOR VERDE",
+            "age": 22,
+            "gender": "No binario",
+            "created_at": "2026-11-13 22:10:58"
+        },
+        {
+            "pseudonym": "LOBO VIOLETA",
+            "age": 12,
+            "gender": "No binario",
+            "created_at": "2026-11-13 22:13:44"
+        },
+        {
+            "pseudonym": "DELFÍN VERDE",
+            "age": 12,
+            "gender": "Mujer",
+            "created_at": "2026-11-13 22:15:08"
+        },
+        {
+            "pseudonym": "TIGRE ÍNDIGO",
+            "age": 12,
+            "gender": "Hombre",
+            "created_at": "2026-11-13 22:20:30"
+        },
+        {
+            "pseudonym": "LEÓN VERDE",
+            "age": 15,
+            "gender": "Hombre",
+            "created_at": "2026-11-13 22:20:41"
+        },
+        {
+            "pseudonym": "CÓNDOR ÍNDIGO",
+            "age": 12,
+            "gender": "Mujer",
+            "created_at": "2026-11-13 23:05:19"
+        },
+        {
+            "pseudonym": "PANTERA DORADO",
+            "age": 15,
+            "gender": "No binario",
+            "created_at": "2026-11-13 23:07:20"
+        },
+        {
+            "pseudonym": "DELFÍN ESMERALDA",
+            "age": 11,
+            "gender": "No binario",
+            "created_at": "2026-11-14 17:45:48"
+        },
+        {
+            "pseudonym": "HALCÓN ESMERALDA",
+            "age": 22,
+            "gender": "Mujer",
+            "created_at": "2026-11-14 17:48:47"
+        },
+        {
+            "pseudonym": "DELFÍN DORADO",
+            "age": 56,
+            "gender": "No binario",
+            "created_at": "2026-11-14 18:03:04"
+        },
+        {
+            "pseudonym": "LEÓN ÍNDIGO",
+            "age": 21,
+            "gender": "No binario",
+            "created_at": "2026-11-14 19:10:54"
+        },
+        {
+            "pseudonym": "HALCÓN AZUL",
+            "age": 12,
+            "gender": "Mujer",
+            "created_at": "2026-11-14 19:11:52"
+        },
+        {
+            "pseudonym": "OSO VIOLETA",
+            "age": 12,
+            "gender": "Mujer",
+            "created_at": "2026-11-14 19:12:20"
+        },
+        {
+            "pseudonym": "LEÓN ROJO",
+            "age": 12,
+            "gender": "Hombre",
+            "created_at": "2026-11-14 19:13:01"
+        },
+        {
+            "pseudonym": "ÁGUILA VERDE",
+            "age": 12,
+            "gender": "Mujer",
+            "created_at": "2026-11-14 20:58:37"
+        },
+        {
+            "pseudonym": "BÚHO ROJO",
+            "age": 13,
+            "gender": "Mujer",
+            "created_at": "2026-11-14 21:00:46"
+        },
+        {
+            "pseudonym": "TIGRE DORADO",
+            "age": 34,
+            "gender": "No binario",
+            "created_at": "2026-11-14 21:01:24"
+        },
+        {
+            "pseudonym": "CÓNDOR ÁMBAR",
+            "age": 12,
+            "gender": "No binario",
+            "created_at": "2026-11-18 20:36:59"
+        },
+        {
+            "pseudonym": "OSO TURQUESA",
+            "age": 34,
+            "gender": "No binario",
+            "created_at": "2026-11-18 20:37:25"
+        },
+        {
+            "pseudonym": "OSO ROJO",
+            "age": 12,
+            "gender": "No binario",
+            "created_at": "2026-11-18 20:39:58"
+        },
+        {
+            "pseudonym": "ÁGUILA ÁMBAR",
+            "age": 21,
+            "gender": "Mujer",
+            "created_at": "2026-11-18 23:48:45"
+        },
+        {
+            "pseudonym": "OSO ESMERALDA",
+            "age": 21,
+            "gender": "Mujer",
+            "created_at": "2026-11-18 23:50:05"
+        }
+    ],
+    "records": [
+        {
+            "pseudonym": "ANÓNIMO",
+            "msg_number": 1,
+            "date": "2026-11-05",
+            "timestamp": "23:54:29",
+            "user_msg": "Quiero hablar sobre mi jornada de trabajo",
+            "bot_msg": "Claro, cuéntame cómo estuvo tu jornada. ¿Qué cosas te parecieron interesantes o desafiantes hoy en el trabajo?",
+            "v": 0.0,
+            "a": 0.0,
+            "d": 0.0,
+            "emotion": "Reflexivo",
+            "is_critical": false,
+            "consecutive_negative_count": 0
+        },
+        {
+            "pseudonym": "ANÓNIMO",
+            "msg_number": 2,
+            "date": "2026-11-05",
+            "timestamp": "23:55:14",
+            "user_msg": "hubo una junta con los jefes, pero todo salio excelente",
+            "bot_msg": "¡Qué buena noticia! Parece que la reunión salió como esperabas. Cuéntame, ¿cómo te sientes después de ese éxito?",
+            "v": 0.85,
+            "a": 0.4,
+            "d": 0.7,
+            "emotion": "Entusiasmado",
+            "is_critical": false,
+            "consecutive_negative_count": 0
+        },
+        {
+            "pseudonym": "ANÓNIMO",
+            "msg_number": 3,
+            "date": "2026-11-05",
+            "timestamp": "23:56:51",
+            "user_msg": "Me siento algo estresado hoy",
+            "bot_msg": "Entiendo, el estrés puede ser bastante agobiante. A veces, cuando la presión se acumula, parece que las cosas se nos escapan un poco. ¿Hay algo en particular que sientas que está fuera de tu control y que te gustaría compartir?",
+            "v": -0.4,
+            "a": 0.3,
+            "d": -0.3,
+            "emotion": "Tenso",
+            "is_critical": false,
+            "consecutive_negative_count": 1
+        },
+        {
+            "pseudonym": "ANÓNIMO",
+            "msg_number": 4,
+            "date": "2026-11-06",
+            "timestamp": "23:19:12",
+            "user_msg": "Me siento algo estresado hoy",
+            "bot_msg": "Entiendo, el estrés puede sentirse como una carga pesada. ¿Qué crees que está provocando esa sensación? A veces respirar profundo o tomar un pequeño descanso ayuda a aliviarlo. Cuéntame más, estoy aquí para escucharte.",
+            "v": -0.5,
+            "a": 0.4,
+            "d": -0.4,
+            "emotion": "Tenso",
+            "is_critical": true,
+            "consecutive_negative_count": 2
+        },
+        {
+            "pseudonym": "ANÓNIMO",
+            "msg_number": 5,
+            "date": "2026-11-06",
+            "timestamp": "23:28:26",
+            "user_msg": "Me siento algo estresado hoy",
+            "bot_msg": "Entiendo, el estrés puede ser pesado. ¿Qué ha sido lo que más te ha preocupado? Podemos buscar alguna forma de aliviarlo, respirar profundo o hablar de lo que te está molestando.",
+            "v": -0.3,
+            "a": 0.3,
+            "d": -0.2,
+            "emotion": "Tenso",
+            "is_critical": false,
+            "consecutive_negative_count": 0
+        },
+        {
+            "pseudonym": "ANÓNIMO",
+            "msg_number": 6,
+            "date": "2026-11-06",
+            "timestamp": "23:36:15",
+            "user_msg": "Quiero hablar sobre mi jornada de trabajo",
+            "bot_msg": "Claro, cuéntame cómo ha sido tu jornada. ¿Qué cosas te han parecido más interesantes o desafiantes hoy? Y, de manera sutil, ¿sientes que tienes el control necesario para manejar los imprevistos que aparecen en tu trabajo?",
+            "v": 0.0,
+            "a": 0.0,
+            "d": 0.0,
+            "emotion": "Reflexivo",
+            "is_critical": false,
+            "consecutive_negative_count": 0
+        },
+        {
+            "pseudonym": "ANÓNIMO",
+            "msg_number": 7,
+            "date": "2026-11-07",
+            "timestamp": "23:38:54",
+            "user_msg": "Quiero hablar sobre mi jornada de trabajo",
+            "bot_msg": "Claro, cuéntame cómo estuvo tu jornada. ¿Qué cosas te llamaron la atención o te dejaron alguna sensación particular?",
+            "v": 0.1,
+            "a": 0.1,
+            "d": 0.0,
+            "emotion": "Reflexivo",
+            "is_critical": false,
+            "consecutive_negative_count": 0
+        },
+        {
+            "pseudonym": "ANÓNIMO",
+            "msg_number": 8,
+            "date": "2026-11-07",
+            "timestamp": "23:41:46",
+            "user_msg": "Me siento algo estresado hoy",
+            "bot_msg": "Entiendo, el estrés puede pesar bastante. ¿Qué te parece si respiramos profundo juntos y vemos qué pequeñas cosas pueden aliviar esa presión? A veces, una pausa corta o cambiar de ambiente ayuda a recuperar la calma.",
+            "v": -0.3,
+            "a": 0.4,
+            "d": -0.3,
+            "emotion": "Tenso",
+            "is_critical": false,
+            "consecutive_negative_count": 0
+        },
+        {
+            "pseudonym": "DELFÍN ÁMBAR",
+            "msg_number": 1,
+            "date": "2026-11-07",
+            "timestamp": "23:54:22",
+            "user_msg": "Me siento algo estresado hoy",
+            "bot_msg": "Entiendo, el estrés puede ser pesado. ¿Qué ha sido lo que más ha ocupado tu mente hoy? A veces, hablar de lo que nos preocupa ayuda a aliviar un poco la tensión. Si lo prefieres, podemos intentar una respiración profunda juntos: inhala contando hasta cuatro, retén dos segundos y exhala lentamente contando hasta seis. Repite eso unas cuantas veces y dime cómo te sientes.",
+            "v": -0.4,
+            "a": 0.3,
+            "d": -0.3,
+            "emotion": "Tenso",
+            "is_critical": false,
+            "consecutive_negative_count": 1
+        },
+        {
+            "pseudonym": "BÚHO PLATEADO",
+            "msg_number": 1,
+            "date": "2026-11-07",
+            "timestamp": "23:55:13",
+            "user_msg": "holaaa",
+            "bot_msg": "¡Hola! Qué gusto leerte. ¿Cómo te sientes hoy?",
+            "v": 0.2,
+            "a": 0.1,
+            "d": 0.0,
+            "emotion": "Amistoso",
+            "is_critical": false,
+            "consecutive_negative_count": 0
+        },
+        {
+            "pseudonym": "ÁGUILA ÁMBAR",
+            "date": "2026-11-18",
+            "timestamp": "23:49:21",
+            "user_msg": "Quiero hablar sobre mi jornada de trabajo",
+            "bot_msg": "Me parece bien que quieras compartir cómo ha sido tu día de trabajo. ¿Qué momentos te han parecido más gratificantes y cuáles más desafiantes?",
+            "v": 0.6,
+            "a": 0.3,
+            "d": 0.0,
+            "emotion": "Reflexivo",
+            "is_critical": false
+        },
+        {
+            "pseudonym": "OSO ESMERALDA",
+            "date": "2026-11-18",
+            "timestamp": "23:50:22",
+            "user_msg": "Quiero hablar sobre mi jornada de trabajo",
+            "bot_msg": "Entiendo, cuéntame cómo ha sido tu jornada. ¿Qué momentos fueron más desafiantes o gratificantes?",
+            "v": 0.3,
+            "a": 0.2,
+            "d": 0.0,
+            "emotion": "Reflexivo",
+            "is_critical": false
+        },
+        {
+            "pseudonym": "OSO ESMERALDA",
+            "date": "2026-11-18",
+            "timestamp": "23:50:49",
+            "user_msg": "quiza que mi jefe me cito a su oficina, estaba aterrado",
+            "bot_msg": "Entiendo que te sientas muy nervioso por la cita con tu jefe. Es normal que la incertidumbre genere temor. Respira hondo, trata de centrarte en lo que puedes controlar y recuerda que, sea cual sea el motivo, tendrás la oportunidad de expresar tu punto de vista. ¿Te gustaría hablar más sobre qué crees que pueda pasar o cómo prepararte?",
+            "v": -0.3,
+            "a": 0.6,
+            "d": -0.5,
+            "emotion": "Ansioso",
+            "is_critical": false
+        }
+    ]
+}
