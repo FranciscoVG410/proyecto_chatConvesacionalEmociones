@@ -41,7 +41,10 @@
         </select>
       </div>
 
-      <button type="submit" id="submitNewBtn" class="btn-submit" disabled>Registrarse y Comenzar</button>
+      <div class="form-actions">
+        <button type="button" class="btn-submit btn-secondary" onclick="goBack()">Volver</button>
+        <button type="submit" id="submitNewBtn" class="btn-submit" disabled>Registrarse y Comenzar</button>
+      </div>
     </form>
 
     <!-- Formulario para Usuario Recurrente -->
@@ -50,7 +53,10 @@
         <label for="existingPseudonym">Ingresa tu pseudónimo (Ej. LOBO AZUL):</label>
         <input type="text" id="existingPseudonym" name="existingPseudonym" class="uppercase-input" required placeholder="ANIMAL COLOR">
       </div>
-      <button type="submit" class="btn-submit">Continuar Sesión</button>
+      <div class="form-actions">
+        <button type="button" class="btn-submit btn-secondary" onclick="goBack()">Volver</button>
+        <button type="submit" class="btn-submit">Continuar Sesión</button>
+      </div>
     </form>
   </div>
 
@@ -60,12 +66,20 @@
     function showNewForm() {
       document.getElementById('modeSelector').style.display = 'none';
       document.getElementById('newParticipantForm').style.display = 'block';
-      fetchUniquePseudonym();
+      if (!assignedPseudonym) {
+        fetchUniquePseudonym();
+      }
     }
 
     function showReturningForm() {
       document.getElementById('modeSelector').style.display = 'none';
       document.getElementById('returningForm').style.display = 'block';
+    }
+
+    function goBack() {
+      document.getElementById('newParticipantForm').style.display = 'none';
+      document.getElementById('returningForm').style.display = 'none';
+      document.getElementById('modeSelector').style.display = 'flex';
     }
 
     async function fetchUniquePseudonym() {
