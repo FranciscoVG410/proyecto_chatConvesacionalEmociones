@@ -99,7 +99,7 @@ select, input {
 }
 
 .btn-submit:hover:not(:disabled) {
-  background-color: #4338ca;
+  background-color: #a92ea4;
 }
 
 .btn-submit:disabled {
