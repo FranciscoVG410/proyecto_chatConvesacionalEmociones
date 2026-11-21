@@ -1,6 +1,6 @@
 body {
   font-family: 'Segoe UI', Arial, sans-serif;
-  background-color: #f8fafc;
+  background-color: #b39ddb;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -30,6 +30,16 @@ p.subtitle {
   margin-bottom: 20px;
 }
 
+.mode-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.hidden-form {
+  display: none;
+}
+
 .form-group {
   margin-bottom: 15px;
 }
@@ -51,22 +61,32 @@ select, input {
   box-sizing: border-box;
 }
 
+.uppercase-input {
+  text-transform: uppercase;
+}
+
 .pseudonym-box {
-  background: #f1f5f9;
-  padding: 12px;
+  background: #f8fafc;
+  padding: 10px;
   border-radius: 6px;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
+}
+
+.pseudonym-label {
+  display: block;
+  color: #64748b;
+  margin-bottom: 4px;
 }
 
 .pseudonym-box span {
-  font-size: 16px;
+  font-size: 1.1em;
   font-weight: bold;
   color: #4f46e5;
 }
 
 .btn-submit {
-  background-color: #4f46e5;
+  background-color: #b39ddb;
   color: white;
   border: none;
   width: 100%;
@@ -78,6 +98,19 @@ select, input {
   transition: background-color 0.2s;
 }
 
-.btn-submit:hover {
+.btn-submit:hover:not(:disabled) {
   background-color: #4338ca;
+}
+
+.btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: #64748b;
+}
+
+.btn-secondary:hover {
+  background-color: #475569;
 }
