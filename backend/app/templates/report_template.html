@@ -335,7 +335,7 @@
   </script>
   <script>
     async function downloadReport() {
-      const btn = document.querySelector(".btn-submit");
+      const btn = document.querySelector(".btn-download");
       try {
         if (btn) {
           btn.disabled = true;
@@ -350,11 +350,10 @@
           .replace(/[^a-z0-9]+/gi, "_")
           .replace(/^_|_$/g, "");
 
-        // Ocultamos el botón temporalmente para que no salga en el PDF
         if (btn) btn.style.display = "none";
 
         const opt = {
-          margin:       [10, 10, 10, 10], // márgenes en mm
+          margin:       [10, 10, 10, 10],
           filename:     `reporte_socius_${cleanPseudo || "general"}.pdf`,
           image:        { type: "png", quality: 1 },
           html2canvas:  { scale: 2, useCORS: true, logging: false },
