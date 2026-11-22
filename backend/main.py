@@ -431,3 +431,5 @@ def serve_dashboard():
 @app.get("/thanks", response_class=HTMLResponse)
 def serve_thanks(request: Request):
     return templates.TemplateResponse(request=request, name="thanks.html", context={})
+
+app.mount("/js", StaticFiles(directory="js"), name="js")

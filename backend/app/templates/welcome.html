@@ -19,7 +19,7 @@
     </div>
 
     <!-- Formulario para Nuevo Usuario -->
-    <form id="newParticipantForm" class="hidden-form">
+    <form id="newParticipantForm" class="hidden-form" novalidate>
       <div class="pseudonym-box">
         <small class="pseudonym-label">Tu pseudónimo asignado:</small>
         <span id="pseudonymText">Generando...</span>
@@ -27,7 +27,19 @@
 
       <div class="form-group">
         <label for="age">Edad:</label>
-        <input type="number" id="age" name="age" min="10" max="120" required placeholder="Ej. 25">
+        <input
+          type="number"
+          id="age"
+          name="age"
+          min="17"
+          max="120"
+          step="1"
+          inputmode="numeric"
+          required
+          onkeydown="if (['e', 'E', '+', '-', '.'].includes(event.key)) event.preventDefault();"
+          oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+          placeholder="Ej. 25"
+        >
       </div>
 
       <div class="form-group">
@@ -59,109 +71,6 @@
       </div>
     </form>
   </div>
-
-  <script>
-    let assignedPseudonym = "";
-
-    function showNewForm() {
-      document.getElementById('modeSelector').style.display = 'none';
-      document.getElementById('newParticipantForm').style.display = 'block';
-      if (!assignedPseudonym) {
-        fetchUniquePseudonym();
-      }
-    }
-
-    function showReturningForm() {
-      document.getElementById('modeSelector').style.display = 'none';
-      document.getElementById('returningForm').style.display = 'block';
-    }
-
-    function goBack() {
-      document.getElementById('newParticipantForm').style.display = 'none';
-      document.getElementById('returningForm').style.display = 'none';
-      document.getElementById('modeSelector').style.display = 'flex';
-    }
-
-    async function fetchUniquePseudonym() {
-      try {
-        const response = await fetch('/api/generate-pseudonym');
-        const data = await response.json();
-        if (response.ok) {
-          assignedPseudonym = data.pseudonym;
-          document.getElementById('pseudonymText').textContent = assignedPseudonym;
-          const btn = document.getElementById('submitNewBtn');
-          btn.disabled = false;
-          btn.textContent = "Registrarse y Comenzar";
-        } else {
-          alert("Error al generar pseudónimo: " + data.detail);
-        }
-      } catch (err) {
-        console.error(err);
-        document.getElementById('pseudonymText').textContent = "Error de conexión";
-      }
-    }
-
-    // Enviar registro nuevo
-    document.getElementById('newParticipantForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      if (!assignedPseudonym) {
-        alert("El pseudónimo aún no se ha generado. Espera un momento.");
-        return;
-      }
-
-      const payload = {
-        pseudonym: assignedPseudonym,
-        age: parseInt(document.getElementById('age').value),
-        gender: document.getElementById('gender').value
-      };
-
-      try {
-        const res = await fetch('/api/register-participant', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        const resultData = await res.json();
-
-        if (res.ok) {
-          localStorage.setItem('socius_pseudonym', assignedPseudonym);
-          window.location.href = "/chat-app";
-        } else {
-          alert("Error en el registro: " + (resultData.detail || "Desconocido"));
-        }
-      } catch (error) {
-        console.error("Error de red:", error);
-        alert("No se pudo conectar con el servidor para registrar el usuario.");
-      }
-    });
-
-    // Enviar acceso recurrente
-    document.getElementById('returningForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const pseudonymVal = document.getElementById('existingPseudonym').value.trim().toUpperCase();
-
-      try {
-        const res = await fetch('/api/login-participant', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ pseudonym: pseudonymVal })
-        });
-
-        const resultData = await res.json();
-
-        if (res.ok) {
-          localStorage.setItem('socius_pseudonym', pseudonymVal);
-          window.location.href = "/chat-app";
-        } else {
-          alert("Error: " + (resultData.detail || "Pseudónimo no encontrado"));
-        }
-      } catch (error) {
-        console.error("Error de red:", error);
-        alert("No se pudo conectar con el servidor.");
-      }
-    });
-  </script>
+  <script src="/js/welcomejs.js"></script>
 </body>
 </html>
