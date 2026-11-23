@@ -104,7 +104,7 @@ if chat_history_records:
 # INICIALIZACIÓN DE FASTAPI Y RECURSOS
 
 app = FastAPI(title="SOCIUS")
-app.mount("/js", StaticFiles(directory=str(BASE_DIR / "frontend" / "js")), name="js")
+app.mount("/js", StaticFiles(directory=os.path.join(BASE_DIR, "..", "frontend", "js")), name="js")
 app.mount("/css", StaticFiles(directory=os.path.join(BASE_DIR, "..", "frontend", "css")), name="css")
 app.mount("/imgs", StaticFiles(directory=os.path.join(BASE_DIR, "..", "frontend", "imgs")), name="imgs")
 
@@ -431,5 +431,3 @@ def serve_dashboard():
 @app.get("/thanks", response_class=HTMLResponse)
 def serve_thanks(request: Request):
     return templates.TemplateResponse(request=request, name="thanks.html", context={})
-
-app.mount("/js", StaticFiles(directory=str(BASE_DIR / "frontend" / "js")), name="js")
