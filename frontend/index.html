@@ -9,20 +9,17 @@
 <body>
 
     <header>
-        <img src="imgs/purplesocius.png" alt="Socius">
+        <img src="imgs/sociusfinal.png" alt="Socius">
     </header>
 
     <div class="chat-box">
         <div class="chat-header">
-            <span class="chat-title">Socius Assistant</span>
-            <div class="status-badge">
-                <span class="status-dot"></span> En vivo
-            </div>
+            <span class="chat-title">Asistente SOCIUS</span>
         </div>
         
         <div class="messages" id="msgs">
             <div class="msg bot">
-                Hola, bienvenido a Socius. Estoy aquí para acompañarte. ¿De qué te gustaría hablar hoy?
+                Hola, bienvenido, soy Socius. Estoy aquí para acompañarte y escucharte. ¿De qué te gustaría hablar hoy?
                 
                 <!-- OPCIONES DE INICIO RÁPIDO -->
                 <div class="quick-prompts">
@@ -52,7 +49,6 @@
             <div class="toolbar" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 13px; color: #64748b;">
                 <span id="sessionInfo">Sesión activa</span>
                 <div>
-                    <button class="btn-clear" onclick="clearChat()" style="background: none; border: none; color: #64748b; cursor: pointer; margin-right: 10px;">Reiniciar chat</button>
                     <button onclick="endSession()" style="background-color: #fee2e2; color: #dc2626; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-weight: bold;">Finalizar sesión</button>
                 </div>
             </div>

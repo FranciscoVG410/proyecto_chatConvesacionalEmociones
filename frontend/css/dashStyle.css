@@ -15,13 +15,14 @@ body {
 
 /* ENCABEZADO PRINCIPAL */
 .main-header {
+    height: 110px;
     width: 100%;
     text-align: center;
     flex-shrink: 0;
 }
 
 .main-header img {
-    height: clamp(48px, 7vh, 72px);
+    height: 110px;
     max-width: 100%;
     object-fit: contain;
     display: block;
@@ -51,6 +52,7 @@ body {
 
 .panel-left {
     width: clamp(235px, 23vw, 310px);
+    background-color: #b39ddb;
     flex-shrink: 0;
     overflow-y: auto; 
 }
@@ -58,6 +60,14 @@ body {
 .panel-right {
     flex: 1;
     min-width: 0;
+}
+
+.panel-left .report-action {
+    margin-top: 12px;
+}
+
+.panel-left .btn-report {
+    width: 100%;
 }
 
 /* IMÁGENES INTERNAS DE LOS PANELES */
@@ -71,8 +81,8 @@ body {
 }
 
 .panel-right-img {
-    max-width: min(50%, 420px);
-    max-height: clamp(24px, 4vh, 38px);
+    max-width: 70%;
+    max-height: auto;
     height: auto;
     display: block;
     margin: 0 auto 8px auto;
