@@ -432,4 +432,4 @@ def serve_dashboard():
 def serve_thanks(request: Request):
     return templates.TemplateResponse(request=request, name="thanks.html", context={})
 
-app.mount("/js", StaticFiles(directory="frontend/js"), name="js")
+app.mount("/js", StaticFiles(directory=str(BASE_DIR / "frontend" / "js")), name="js")
