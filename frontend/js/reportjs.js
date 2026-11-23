@@ -1,11 +1,24 @@
+let renderReportCharts = () => {};
+
+function parseVadPoints() {
+  const vadDataEl = document.getElementById("vad-data");
+  if (!vadDataEl || !vadDataEl.textContent.trim()) return [];
+
+  let parsed = JSON.parse(vadDataEl.textContent.trim());
+  if (typeof parsed === "string") {
+    parsed = JSON.parse(parsed);
+  }
+  return Array.isArray(parsed) ? parsed : [];
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   try {
-    const vadDataEl = document.getElementById("vad-data");
-    const vadPoints = vadDataEl ? JSON.parse(vadDataEl.textContent) : [];
+    const vadPoints = parseVadPoints();
 
     // 1. RENDERIZADO DEL CUBO 3D GABINETE
     const cubeCanvas = document.getElementById("vadCubeCanvas");
-    if (cubeCanvas) {
+    function draw3DCubeScene() {
+      if (!cubeCanvas) return;
       const cubeCtx = cubeCanvas.getContext("2d");
 
       function project3DToCabinet(v, a, d) {
@@ -26,116 +39,113 @@ document.addEventListener("DOMContentLoaded", () => {
         };
       }
 
-      function draw3DCubeScene() {
-        cubeCtx.clearRect(0, 0, cubeCanvas.width, cubeCanvas.height);
+      cubeCtx.clearRect(0, 0, cubeCanvas.width, cubeCanvas.height);
 
-        const rawCorners = [
-          { v: -1, a: -1, d: -1 }, { v: 1, a: -1, d: -1 }, { v: 1, a: 1, d: -1 }, { v: -1, a: 1, d: -1 },
-          { v: -1, a: -1, d: 1 }, { v: 1, a: -1, d: 1 }, { v: 1, a: 1, d: 1 }, { v: -1, a: 1, d: 1 }
-        ];
-        const vertices = rawCorners.map((c) => project3DToCabinet(c.v, c.a, c.d));
+      const rawCorners = [
+        { v: -1, a: -1, d: -1 }, { v: 1, a: -1, d: -1 }, { v: 1, a: 1, d: -1 }, { v: -1, a: 1, d: -1 },
+        { v: -1, a: -1, d: 1 }, { v: 1, a: -1, d: 1 }, { v: 1, a: 1, d: 1 }, { v: -1, a: 1, d: 1 }
+      ];
+      const vertices = rawCorners.map((c) => project3DToCabinet(c.v, c.a, c.d));
 
-        const edges = [
-          [0, 1], [1, 2], [2, 3], [3, 0],
-          [4, 5], [5, 6], [6, 7], [7, 4],
-          [0, 4], [1, 5], [2, 6], [3, 7]
-        ];
+      const edges = [
+        [0, 1], [1, 2], [2, 3], [3, 0],
+        [4, 5], [5, 6], [6, 7], [7, 4],
+        [0, 4], [1, 5], [2, 6], [3, 7]
+      ];
 
-        cubeCtx.lineWidth = 2;
-        cubeCtx.strokeStyle = "#16a34a";
+      cubeCtx.lineWidth = 2;
+      cubeCtx.strokeStyle = "#16a34a";
+      cubeCtx.setLineDash([]);
+
+      edges.forEach((edge) => {
+        const p1 = vertices[edge[0]];
+        const p2 = vertices[edge[1]];
+        cubeCtx.beginPath();
+        cubeCtx.moveTo(p1.x, p1.y);
+        cubeCtx.lineTo(p2.x, p2.y);
+        cubeCtx.stroke();
+      });
+
+      cubeCtx.save();
+      cubeCtx.strokeStyle = "#94a3b8";
+      cubeCtx.lineWidth = 1.5;
+      cubeCtx.setLineDash([4, 4]);
+
+      const vStart = project3DToCabinet(-1, 0, -1), vEnd = project3DToCabinet(1, 0, -1);
+      cubeCtx.beginPath(); cubeCtx.moveTo(vStart.x, vStart.y); cubeCtx.lineTo(vEnd.x, vEnd.y); cubeCtx.stroke();
+
+      const aStart = project3DToCabinet(0, -1, -1), aEnd = project3DToCabinet(0, 1, -1);
+      cubeCtx.beginPath(); cubeCtx.moveTo(aStart.x, aStart.y); cubeCtx.lineTo(aEnd.x, aEnd.y); cubeCtx.stroke();
+
+      const dStart = project3DToCabinet(0, 0, -1), dEnd = project3DToCabinet(0, 0, 1);
+      cubeCtx.beginPath(); cubeCtx.moveTo(dStart.x, dStart.y); cubeCtx.lineTo(dEnd.x, dEnd.y); cubeCtx.stroke();
+      cubeCtx.restore();
+
+      cubeCtx.fillStyle = "#334155";
+      cubeCtx.font = "bold 11px Segoe UI";
+      const labelV = project3DToCabinet(0, -1, -1);
+      cubeCtx.fillText("Valencia (V)", labelV.x - 25, labelV.y + 18);
+      const labelA = project3DToCabinet(-1, 0, -1);
+      cubeCtx.fillText("Activación (A)", labelA.x - 75, labelA.y + 4);
+      const labelD = project3DToCabinet(1, 1, 0);
+      cubeCtx.fillText("Dominancia (D)", labelD.x + 12, labelD.y);
+
+      if (vadPoints.length > 0) {
+        cubeCtx.beginPath();
+        cubeCtx.strokeStyle = "#4f46e5";
+        cubeCtx.lineWidth = 2.5;
         cubeCtx.setLineDash([]);
 
-        edges.forEach((edge) => {
-          const p1 = vertices[edge[0]];
-          const p2 = vertices[edge[1]];
-          cubeCtx.beginPath();
-          cubeCtx.moveTo(p1.x, p1.y);
-          cubeCtx.lineTo(p2.x, p2.y);
-          cubeCtx.stroke();
+        vadPoints.forEach((pt, index) => {
+          const p = project3DToCabinet(pt.v, pt.a, pt.d);
+          if (index === 0) cubeCtx.moveTo(p.x, p.y);
+          else cubeCtx.lineTo(p.x, p.y);
         });
+        cubeCtx.stroke();
 
-        cubeCtx.save();
-        cubeCtx.strokeStyle = "#94a3b8";
-        cubeCtx.lineWidth = 1.5;
-        cubeCtx.setLineDash([4, 4]);
+        vadPoints.forEach((pt, index) => {
+          const p = project3DToCabinet(pt.v, pt.a, pt.d);
+          const pFloor = project3DToCabinet(pt.v, -1, pt.d);
+          const pWall = project3DToCabinet(-1, pt.a, pt.d);
 
-        const vStart = project3DToCabinet(-1, 0, -1), vEnd = project3DToCabinet(1, 0, -1);
-        cubeCtx.beginPath(); cubeCtx.moveTo(vStart.x, vStart.y); cubeCtx.lineTo(vEnd.x, vEnd.y); cubeCtx.stroke();
+          cubeCtx.save();
+          cubeCtx.setLineDash([3, 3]);
+          cubeCtx.strokeStyle = "rgba(79, 70, 229, 0.45)";
+          cubeCtx.lineWidth = 1;
 
-        const aStart = project3DToCabinet(0, -1, -1), aEnd = project3DToCabinet(0, 1, -1);
-        cubeCtx.beginPath(); cubeCtx.moveTo(aStart.x, aStart.y); cubeCtx.lineTo(aEnd.x, aEnd.y); cubeCtx.stroke();
+          cubeCtx.beginPath(); cubeCtx.moveTo(p.x, p.y); cubeCtx.lineTo(pFloor.x, pFloor.y); cubeCtx.stroke();
+          cubeCtx.beginPath(); cubeCtx.moveTo(p.x, p.y); cubeCtx.lineTo(pWall.x, pWall.y); cubeCtx.stroke();
+          cubeCtx.restore();
 
-        const dStart = project3DToCabinet(0, 0, -1), dEnd = project3DToCabinet(0, 0, 1);
-        cubeCtx.beginPath(); cubeCtx.moveTo(dStart.x, dStart.y); cubeCtx.lineTo(dEnd.x, dEnd.y); cubeCtx.stroke();
-        cubeCtx.restore();
-
-        cubeCtx.fillStyle = "#334155";
-        cubeCtx.font = "bold 11px Segoe UI";
-        const labelV = project3DToCabinet(0, -1, -1);
-        cubeCtx.fillText("Valencia (V)", labelV.x - 25, labelV.y + 18);
-        const labelA = project3DToCabinet(-1, 0, -1);
-        cubeCtx.fillText("Activación (A)", labelA.x - 75, labelA.y + 4);
-        const labelD = project3DToCabinet(1, 1, 0);
-        cubeCtx.fillText("Dominancia (D)", labelD.x + 12, labelD.y);
-
-        if (vadPoints && vadPoints.length > 0) {
           cubeCtx.beginPath();
-          cubeCtx.strokeStyle = "#4f46e5";
-          cubeCtx.lineWidth = 2.5;
-          cubeCtx.setLineDash([]);
+          cubeCtx.arc(p.x, p.y, 6, 0, Math.PI * 2);
 
-          vadPoints.forEach((pt, index) => {
-            const p = project3DToCabinet(pt.v, pt.a, pt.d);
-            if (index === 0) cubeCtx.moveTo(p.x, p.y);
-            else cubeCtx.lineTo(p.x, p.y);
-          });
+          if (pt.is_critical) {
+            cubeCtx.fillStyle = "#f59e0b";
+            cubeCtx.strokeStyle = "#b45309";
+          } else if (index === vadPoints.length - 1) {
+            cubeCtx.fillStyle = "#ef4444";
+            cubeCtx.strokeStyle = "#991b1b";
+          } else {
+            cubeCtx.fillStyle = "#4f46e5";
+            cubeCtx.strokeStyle = "#312e81";
+          }
+
+          cubeCtx.lineWidth = 2;
+          cubeCtx.fill();
           cubeCtx.stroke();
 
-          vadPoints.forEach((pt, index) => {
-            const p = project3DToCabinet(pt.v, pt.a, pt.d);
-            const pFloor = project3DToCabinet(pt.v, -1, pt.d);
-            const pWall = project3DToCabinet(-1, pt.a, pt.d);
-
-            cubeCtx.save();
-            cubeCtx.setLineDash([3, 3]);
-            cubeCtx.strokeStyle = "rgba(79, 70, 229, 0.45)";
-            cubeCtx.lineWidth = 1;
-
-            cubeCtx.beginPath(); cubeCtx.moveTo(p.x, p.y); cubeCtx.lineTo(pFloor.x, pFloor.y); cubeCtx.stroke();
-            cubeCtx.beginPath(); cubeCtx.moveTo(p.x, p.y); cubeCtx.lineTo(pWall.x, pWall.y); cubeCtx.stroke();
-            cubeCtx.restore();
-
-            cubeCtx.beginPath();
-            cubeCtx.arc(p.x, p.y, 6, 0, Math.PI * 2);
-
-            if (pt.is_critical) {
-              cubeCtx.fillStyle = "#f59e0b";
-              cubeCtx.strokeStyle = "#b45309";
-            } else if (index === vadPoints.length - 1) {
-              cubeCtx.fillStyle = "#ef4444";
-              cubeCtx.strokeStyle = "#991b1b";
-            } else {
-              cubeCtx.fillStyle = "#4f46e5";
-              cubeCtx.strokeStyle = "#312e81";
-            }
-
-            cubeCtx.lineWidth = 2;
-            cubeCtx.fill();
-            cubeCtx.stroke();
-
-            cubeCtx.fillStyle = "#1e293b";
-            cubeCtx.font = "bold 11px Segoe UI";
-            cubeCtx.fillText(pt.label, p.x + 10, p.y - 4);
-          });
-        }
+          cubeCtx.fillStyle = "#1e293b";
+          cubeCtx.font = "bold 11px Segoe UI";
+          cubeCtx.fillText(pt.label, p.x + 10, p.y - 4);
+        });
       }
-
-      draw3DCubeScene();
     }
 
     // 2. RENDERIZADO DE LAS GRÁFICAS 2D DUALES
     const dualCanvas = document.getElementById("vadDualCanvas");
-    if (dualCanvas) {
+    function drawDual2DScene() {
+      if (!dualCanvas) return;
       const dualCtx = dualCanvas.getContext("2d");
 
       function drawCartesianAxes(ctx, centerX, centerY, scale, labelX, labelY) {
@@ -162,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       function drawPointsAndPath2D(ctx, projectionFn) {
-        if (!vadPoints || vadPoints.length === 0) return;
+        if (vadPoints.length === 0) return;
 
         ctx.beginPath();
         ctx.strokeStyle = "#4f46e5";
@@ -203,33 +213,36 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
-      function drawDual2DScene() {
-        dualCtx.clearRect(0, 0, dualCanvas.width, dualCanvas.height);
-        const width = dualCanvas.width;
-        const height = dualCanvas.height;
+      dualCtx.clearRect(0, 0, dualCanvas.width, dualCanvas.height);
+      const width = dualCanvas.width;
+      const height = dualCanvas.height;
 
-        const boxSize = Math.min(width * 0.38, height * 0.65);
-        const scale = boxSize / 2;
+      const boxSize = Math.min(width * 0.38, height * 0.65);
+      const scale = boxSize / 2;
 
-        const centerLeftX = width * 0.28;
-        const centerRightX = width * 0.72;
-        const centerY = height * 0.52;
+      const centerLeftX = width * 0.28;
+      const centerRightX = width * 0.72;
+      const centerY = height * 0.52;
 
-        drawCartesianAxes(dualCtx, centerLeftX, centerY, scale, "Valencia (V)", "Activación (A)");
-        drawPointsAndPath2D(dualCtx, (pt) => ({
-          x: centerLeftX + pt.v * scale,
-          y: centerY - pt.a * scale
-        }));
+      drawCartesianAxes(dualCtx, centerLeftX, centerY, scale, "Valencia (V)", "Activación (A)");
+      drawPointsAndPath2D(dualCtx, (pt) => ({
+        x: centerLeftX + pt.v * scale,
+        y: centerY - pt.a * scale
+      }));
 
-        drawCartesianAxes(dualCtx, centerRightX, centerY, scale, "Dominancia (D)", "Activación (A)");
-        drawPointsAndPath2D(dualCtx, (pt) => ({
-          x: centerRightX + pt.d * scale,
-          y: centerY - pt.a * scale
-        }));
-      }
-
-      drawDual2DScene();
+      drawCartesianAxes(dualCtx, centerRightX, centerY, scale, "Dominancia (D)", "Activación (A)");
+      drawPointsAndPath2D(dualCtx, (pt) => ({
+        x: centerRightX + pt.d * scale,
+        y: centerY - pt.a * scale
+      }));
     }
+
+    renderReportCharts = () => {
+      draw3DCubeScene();
+      drawDual2DScene();
+    };
+
+    renderReportCharts();
   } catch (err) {
     console.error("Error al renderizar las gráficas en el reporte:", err);
   }
@@ -238,6 +251,8 @@ document.addEventListener("DOMContentLoaded", () => {
 async function downloadReport() {
   const btn = document.querySelector(".btn-download");
   try {
+    renderReportCharts();
+
     if (btn) {
       btn.disabled = true;
       btn.textContent = "Generando PDF...";
