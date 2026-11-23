@@ -55,9 +55,16 @@ async function send() {
     });
 
     const data = await res.json();
+    const botReply = data.response ?? data.reply ?? data.message ?? data.bot_msg ?? data.detail;
 
     typing.style.display = "none";
-    msgs.innerHTML += `<div class="msg bot">${data.response}</div>`;
+
+    if (!botReply) {
+      console.warn("Respuesta inesperada de /api/chat:", data);
+      msgs.innerHTML += `<div class="msg bot" style="color: #ef4444;">El servidor no devolvió un mensaje de texto.</div>`;
+    } else {
+      msgs.innerHTML += `<div class="msg bot">${botReply}</div>`;
+    }
   } catch (error) {
     typing.style.display = "none";
     msgs.innerHTML += `<div class="msg bot" style="color: #ef4444;">No se pudo conectar con el servidor.</div>`;
