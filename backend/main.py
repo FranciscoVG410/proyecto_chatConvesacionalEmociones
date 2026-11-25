@@ -2,14 +2,15 @@ import os
 import json
 import sys
 import random
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Request
+import secrets
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Request, Form, Depends
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from typing import List, Dict, Any
-from datetime import datetime
+from datetime import datetime, timedelta
 import traceback
 from groq import Groq
 from dotenv import load_dotenv
@@ -37,6 +38,10 @@ if not groq_key:
 
 client = Groq(api_key=groq_key)
 MODELO_GROQ = "openai/gpt-oss-120b"
+
+DASHBOARD_USER = os.getenv("DASHBOARD_USER", "investigador")
+DASHBOARD_PASS = os.getenv("DASHBOARD_PASS", "socius2026")
+ACTIVE_DASHBOARD_SESSIONS = set()
 
 # IMPORTACIONES LOCALES FLEXIBLES
 
@@ -72,7 +77,7 @@ def calculate_lexicon_baseline(text: str) -> tuple[float, float, float]:
     return (0.0, 0.0, d_score)
 
 STUDY_DATA_FILE = os.getenv("STUDY_DATA_PATH") or os.path.join(BASE_DIR, "study_data.json")
-
+print("RUTA STUDY_DATA:", os.path.abspath(STUDY_DATA_FILE))
 def load_study_data() -> Dict[str, Any]:
     if os.path.exists(STUDY_DATA_FILE):
         try:
@@ -139,7 +144,103 @@ class ParticipantRegister(BaseModel):
 class ParticipantLogin(BaseModel):
     pseudonym: str
 
+class DashboardLogin(BaseModel):
+    username: str
+    password: str
+
+def verify_dashboard_session(request: Request) -> str:
+    token = request.cookies.get("socius_dashboard_session")
+    if not token or token not in ACTIVE_DASHBOARD_SESSIONS:
+        raise HTTPException(status_code=401, detail="Sesión no autorizada.")
+    return token
+
+def filter_records_by_period(records: List[Dict[str, Any]], period: str) -> List[Dict[str, Any]]:
+    if period == "global" or not records:
+        return records
+
+    now = datetime.now()
+    cutoffs = {
+        "day": now - timedelta(days=1),
+        "week": now - timedelta(days=7),
+        "month": now - timedelta(days=30),
+    }
+    cutoff = cutoffs.get(period)
+    if not cutoff:
+        return records
+
+    filtered = []
+    for item in records:
+        date_part = str(item.get("date", "")).strip()
+        time_part = str(item.get("timestamp", "00:00:00")).strip()
+        if not date_part:
+            continue
+        try:
+            dt = datetime.strptime(f"{date_part} {time_part}", "%Y-%m-%d %H:%M:%S")
+            if dt >= cutoff:
+                filtered.append(item)
+        except ValueError:
+            try:
+                dt = datetime.strptime(date_part, "%Y-%m-%d")
+                if dt.date() >= cutoff.date():
+                    filtered.append(item)
+            except ValueError:
+                continue
+    return filtered
+
 # ENDPOINTS Y WEBSOCKETS
+
+@app.post("/api/dashboard/login")
+def dashboard_login(payload: DashboardLogin):
+    if secrets.compare_digest(payload.username, DASHBOARD_USER) and secrets.compare_digest(payload.password, DASHBOARD_PASS):
+        token = secrets.token_urlsafe(32)
+        ACTIVE_DASHBOARD_SESSIONS.add(token)
+        response = JSONResponse({"status": "success"})
+        response.set_cookie(
+            key="socius_dashboard_session",
+            value=token,
+            httponly=True,
+            samesite="lax",
+            secure=os.getenv("RAILWAY_ENVIRONMENT") is not None
+        )
+        return response
+    raise HTTPException(status_code=401, detail="Credenciales incorrectas.")
+
+@app.get("/api/dashboard/data")
+def get_dashboard_data(
+    pseudonym: str = "",
+    period: str = "global",
+    _: str = Depends(verify_dashboard_session)
+):
+    study_data = load_study_data()
+    participants_list = study_data.get("participants", [])
+    pseudonyms = [p.get("pseudonym", "").strip().upper() for p in participants_list if p.get("pseudonym")]
+
+    all_records = chat_history_records if chat_history_records else study_data.get("records", [])
+    for r in all_records:
+        rp = r.get("pseudonym", "").strip().upper()
+        if rp and rp != "ANÓNIMO" and rp not in pseudonyms:
+            pseudonyms.append(rp)
+
+    target_pseudo = pseudonym.strip().upper()
+    if not target_pseudo and pseudonyms:
+        target_pseudo = pseudonyms[0]
+
+    if target_pseudo:
+        records_source = [
+            r for r in all_records
+            if r.get("pseudonym", "").strip().upper() == target_pseudo
+        ]
+    else:
+        records_source = all_records
+
+    filtered_records = filter_records_by_period(records_source, period)
+
+    return {
+        "participants": pseudonyms,
+        "selected_pseudonym": target_pseudo,
+        "period": period,
+        "records": filtered_records
+    }
 
 @app.get("/api/generate-pseudonym")
 def generate_unique_pseudonym():
@@ -191,8 +292,13 @@ def login_participant(payload: ParticipantLogin):
     current_active_pseudonym = pseudonym_upper
     return {"status": "success", "participant": found}
 
-@app.get("/api/report", response_class=HTMLResponse)
-async def generate_report(request: Request, pseudonym: str = ""):
+@app.post("/api/report", response_class=HTMLResponse)
+async def generate_report(
+    request: Request,
+    pseudonym: str = Form(""),
+    period: str = Form("global"),
+    _: str = Depends(verify_dashboard_session)
+):
     try:
         date_str = datetime.now().strftime("%Y-%m-%d %H:%M")
         global chat_history_records, current_active_pseudonym
@@ -222,12 +328,14 @@ async def generate_report(request: Request, pseudonym: str = ""):
         all_records = chat_history_records if chat_history_records else study_data.get("records", [])
         
         if target_pseudo:
-            records_source = [
+            records_by_user = [
                 r for r in all_records 
                 if r.get("pseudonym", "").upper() == target_pseudo
             ]
         else:
-            records_source = all_records
+            records_by_user = all_records
+
+        records_source = filter_records_by_period(records_by_user, period)
 
         vad_data_js = []
         report_records = []
@@ -269,6 +377,7 @@ async def generate_report(request: Request, pseudonym: str = ""):
             context={
                 "date_str": date_str,
                 "pseudonym_filter": user_profile["pseudonym"],
+                "period_filter": period,
                 "user_profile": user_profile,
                 "total_records": len(report_records),
                 "critical_count": len(critical_records),

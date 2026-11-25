@@ -12,13 +12,25 @@
 </head>
 <body>
 
+    <div id="dashboardLoginModal" class="login-modal">
+        <div class="login-card">
+            <h2 class="login-title">Acceso al Dashboard</h2>
+            <input type="text" id="loginUser" class="login-input" placeholder="Usuario">
+            <input type="password" id="loginPass" class="login-input" placeholder="Contraseña" onkeydown="if(event.key==='Enter') submitDashboardLogin()">
+            <button type="button" class="btn-login" onclick="submitDashboardLogin()">
+                Iniciar sesión
+            </button>
+            <p id="loginErrorMsg" class="login-error"></p>
+        </div>
+    </div>
+
     <!-- ENCABEZADO PRINCIPAL -->
     <header class="main-header">
         <img src="imgs/sociuspulsefinal.png" alt="Socius - Monitoreo Emocional VAD">
     </header>
 
     <!-- CONTENEDOR DE PANELES -->
-    <div class="dashboard-container">
+    <div id="dashboardContent" class="dashboard-container dashboard-locked">
         
         <!-- PANEL DE TELEMETRÍA -->
         <div class="panel panel-left">
@@ -85,6 +97,26 @@
                         <span class="legend-line legend-line--guide"></span>
                         <span>Líneas Guía (Ejes)</span>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TERCER DIV: FILTROS DE PARTICIPANTE Y PERIODO -->
+        <div class="panel panel-controls">
+            <div class="control-group">
+                <label for="participantSelect" class="control-label">Participante:</label>
+                <select id="participantSelect" class="control-select" onchange="onParticipantChange(this.value)">
+                    <option value="">Cargando...</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <span class="control-label">Periodo:</span>
+                <div id="periodSwitch" class="period-switch">
+                    <button type="button" class="period-btn" data-period="day" onclick="setPeriod('day')">Día</button>
+                    <button type="button" class="period-btn" data-period="week" onclick="setPeriod('week')">Semana</button>
+                    <button type="button" class="period-btn" data-period="month" onclick="setPeriod('month')">Mes</button>
+                    <button type="button" class="period-btn active" data-period="global" onclick="setPeriod('global')">Global</button>
                 </div>
             </div>
         </div>

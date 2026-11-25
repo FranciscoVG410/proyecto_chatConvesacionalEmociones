@@ -261,3 +261,98 @@ body {
     height: 1px;
     border-top: 1px dashed #6366f1;
 }
+
+.dashboard-locked {
+    display: none;
+}
+
+.login-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.96);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.login-card {
+    background: #ffffff;
+    padding: 28px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.login-title {
+    margin: 0 0 16px;
+    color: #1e293b;
+    text-align: center;
+}
+
+.login-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 10px;
+    background: #4f46e5;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.login-error {
+    color: #dc2626;
+    font-size: 13px;
+    margin: 10px 0 0;
+    display: none;
+    text-align: center;
+}
+
+.panel-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.control-label {
+    font-weight: 600;
+}
+
+.control-select {
+    padding: 6px 10px;
+    border-radius: 6px;
+}
+
+.period-switch {
+    display: inline-flex;
+    gap: 6px;
+}
+
+.period-btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.period-btn.active {
+    font-weight: 700;
+}

@@ -4,6 +4,7 @@ const chartContainer = canvas.parentElement;
 
 let historyPoints = [];
 let is3DMode = true;
+let currentPeriod = "global";
 
 const urlParams = new URLSearchParams(window.location.search);
 const forcedPseudonym = (urlParams.get("pseudonym") || "").trim().toUpperCase();
@@ -282,6 +283,13 @@ function drawPointsAndPath3D() {
   });
 }
 
+function resetTelemetryDisplay() {
+  document.getElementById("txt-prompt").innerText = "Esperando datos...";
+  document.getElementById("txt-emotion").innerText = "---";
+  document.getElementById("txt-coords").innerText = "V: 0.00 | A: 0.00 | D: 0.00";
+  document.getElementById("txt-distance").innerText = "0.00";
+}
+
 function processPoint(item, allowAutoLock = true) {
   const dataObj = item.point || item.data || item;
   const itemPseudo = dataObj.pseudonym || item.pseudonym || "";
@@ -313,24 +321,99 @@ function processPoint(item, allowAutoLock = true) {
   drawScene();
 }
 
+function renderParticipantSelector(participants, activePseudo) {
+  const select = document.getElementById("participantSelect");
+  if (!select) return;
+
+  if (!participants || participants.length === 0) {
+    select.innerHTML = `<option value="">Sin participantes</option>`;
+    return;
+  }
+
+  select.innerHTML = participants
+    .map((p) => `<option value="${p}" ${p === activePseudo ? "selected" : ""}>${p}</option>`)
+    .join("");
+}
+
+function onParticipantChange(newPseudonym) {
+  selectedPseudonym = normalizePseudo(newPseudonym);
+  fetchHistory();
+}
+
+function setPeriod(period) {
+  currentPeriod = period;
+  document.querySelectorAll(".period-btn").forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.period === period);
+  });
+  fetchHistory();
+}
+
+function setDashboardLocked(locked) {
+  const modal = document.getElementById("dashboardLoginModal");
+  const content = document.getElementById("dashboardContent");
+  if (modal) modal.style.display = locked ? "flex" : "none";
+  if (content) content.classList.toggle("dashboard-locked", locked);
+}
+
+async function submitDashboardLogin() {
+  const username = document.getElementById("loginUser").value.trim();
+  const password = document.getElementById("loginPass").value;
+  const errorEl = document.getElementById("loginErrorMsg");
+
+  errorEl.style.display = "none";
+
+  try {
+    const response = await fetch("/api/dashboard/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
+    });
+
+    if (!response.ok) {
+      errorEl.innerText = "Usuario o contraseña incorrectos.";
+      errorEl.style.display = "block";
+      return;
+    }
+
+    setDashboardLocked(false);
+    resizeCanvas();
+    await fetchHistory();
+  } catch (e) {
+    errorEl.innerText = "Error de conexión con el servidor.";
+    errorEl.style.display = "block";
+  }
+}
+
 async function fetchHistory() {
   try {
-    const response = await fetch("/api/history");
+    const params = new URLSearchParams({
+      pseudonym: selectedPseudonym,
+      period: currentPeriod
+    });
+    const response = await fetch(`/api/dashboard/data?${params.toString()}`);
+
+    if (response.status === 401) {
+      setDashboardLocked(true);
+      return;
+    }
+
+    setDashboardLocked(false);
     const data = await response.json();
-    if (data.history && data.history.length > 0) {
-      historyPoints = [];
-      if (!selectedPseudonym) {
-        const validRecords = data.history.filter(
-          (r) => normalizePseudo(r.pseudonym) && normalizePseudo(r.pseudonym) !== "ANÓNIMO"
-        );
-        if (validRecords.length > 0) {
-          selectedPseudonym = normalizePseudo(validRecords[validRecords.length - 1].pseudonym);
-        }
-      }
-      data.history.forEach((record) => processPoint(record, false));
+
+    if (data.selected_pseudonym) {
+      selectedPseudonym = normalizePseudo(data.selected_pseudonym);
+    }
+
+    renderParticipantSelector(data.participants || [], selectedPseudonym);
+
+    historyPoints = [];
+    resetTelemetryDisplay();
+
+    if (data.records && data.records.length > 0) {
+      data.records.forEach((record) => processPoint(record, false));
       drawScene();
     } else {
-      resizeCanvas();
+      drawScene();
     }
   } catch (e) {
     console.error("Error al cargar historial:", e);
@@ -351,8 +434,25 @@ ws.onmessage = function (event) {
 
 function goToReport() {
   const pseudonymToUse = selectedPseudonym || localStorage.getItem("socius_pseudonym") || "";
-  const reportUrl = pseudonymToUse
-    ? `/api/report?pseudonym=${encodeURIComponent(pseudonymToUse)}`
-    : "/api/report";
-  window.open(reportUrl, "_blank");
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = "/api/report";
+  form.target = "_blank";
+
+  const fields = {
+    pseudonym: pseudonymToUse,
+    period: currentPeriod
+  };
+
+  for (const [name, value] of Object.entries(fields)) {
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = name;
+    input.value = value;
+    form.appendChild(input);
+  }
+
+  document.body.appendChild(form);
+  form.submit();
+  form.remove();
 }
