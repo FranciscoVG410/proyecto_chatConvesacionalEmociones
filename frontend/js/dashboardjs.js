@@ -321,17 +321,20 @@ function processPoint(item, allowAutoLock = true) {
   drawScene();
 }
 
-function renderParticipantSelector(participants, activePseudo) {
-  const select = document.getElementById("participantSelect");
-  if (!select) return;
+function renderParticipantList(participants, activePseudo) {
+  const list = document.getElementById("participantList");
+  if (!list) return;
 
   if (!participants || participants.length === 0) {
-    select.innerHTML = `<option value="">Sin participantes</option>`;
+    list.innerHTML = `<li class="participant-empty">Sin participantes</li>`;
     return;
   }
 
-  select.innerHTML = participants
-    .map((p) => `<option value="${p}" ${p === activePseudo ? "selected" : ""}>${p}</option>`)
+  list.innerHTML = participants
+    .map((p) => {
+      const isSelected = normalizePseudo(p) === normalizePseudo(activePseudo);
+      return `<li><button type="button" class="participant-item ${isSelected ? "active" : ""}" onclick="onParticipantChange('${p}')">${p}</button></li>`;
+    })
     .join("");
 }
 
@@ -404,7 +407,7 @@ async function fetchHistory() {
       selectedPseudonym = normalizePseudo(data.selected_pseudonym);
     }
 
-    renderParticipantSelector(data.participants || [], selectedPseudonym);
+    renderParticipantList(data.participants || [], selectedPseudonym);
 
     historyPoints = [];
     resetTelemetryDisplay();
