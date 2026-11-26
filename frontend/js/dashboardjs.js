@@ -13,13 +13,17 @@ let selectedPseudonym = forcedPseudonym || storedPseudonym || "";
 const isPseudonymLocked = Boolean(forcedPseudonym || storedPseudonym);
 
 const GENDER_BADGES = {
+  m: "M",
   mujer: "M",
   femenino: "M",
+  h: "H",
   hombre: "H",
   masculino: "H",
+  nb: "NB",
   "no binario": "NB",
   nobinario: "NB",
   no_binario: "NB",
+  pd: "PD",
   "prefiero no decirlo": "PD",
   prefiero_no_decirlo: "PD",
   "prefiero no responder": "PD"
@@ -37,6 +41,22 @@ function formatGenderCode(rawGender) {
 
 function escapeJsSingleQuote(str) {
   return String(str).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+}
+
+function extractGenderFromItem(item) {
+  if (!item || typeof item !== "object") return "";
+  return (
+    item.gender ??
+    item.genero ??
+    item.género ??
+    item.sex ??
+    item.sexo ??
+    item.participant_gender ??
+    item.genero_participante ??
+    item.profile?.gender ??
+    item.profile?.genero ??
+    ""
+  );
 }
 
 function shouldAcceptPoint(pseudo, allowAutoLock = true) {
@@ -344,7 +364,7 @@ function processPoint(item, allowAutoLock = true) {
   drawScene();
 }
 
-function renderParticipantList(participants, activePseudo) {
+function renderParticipantList(participants, activePseudo, records = []) {
   const list = document.getElementById("participantList");
   if (!list) return;
 
@@ -357,11 +377,22 @@ function renderParticipantList(participants, activePseudo) {
     .map((p) => {
       const isObject = typeof p === "object" && p !== null;
       const pseudo = isObject
-        ? (p.pseudonym ?? p.seudonimo ?? p.name ?? "")
+        ? (p.pseudonym ?? p.seudonimo ?? p.name ?? p.id ?? "")
         : String(p);
-      const rawGender = isObject
-        ? (p.gender ?? p.genero ?? p.sex ?? "")
-        : "";
+
+      let rawGender = isObject ? extractGenderFromItem(p) : "";
+
+      if (!rawGender && Array.isArray(records) && records.length > 0) {
+        const matchRecord = records.find((r) => {
+          const recObj = r?.point || r?.data || r;
+          const recPseudo = recObj?.pseudonym || r?.pseudonym || "";
+          return normalizePseudo(recPseudo) === normalizePseudo(pseudo);
+        });
+        if (matchRecord) {
+          const recObj = matchRecord.point || matchRecord.data || matchRecord;
+          rawGender = extractGenderFromItem(recObj) || extractGenderFromItem(matchRecord);
+        }
+      }
 
       const code = formatGenderCode(rawGender);
       const label = code ? `${pseudo} (${code})` : pseudo;
@@ -442,7 +473,7 @@ async function fetchHistory() {
       selectedPseudonym = normalizePseudo(data.selected_pseudonym);
     }
 
-    renderParticipantList(data.participants || [], selectedPseudonym);
+    renderParticipantList(data.participants || [], selectedPseudonym, data.records || []);
 
     historyPoints = [];
     resetTelemetryDisplay();
