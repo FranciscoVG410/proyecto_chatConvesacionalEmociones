@@ -12,8 +12,31 @@ const storedPseudonym = (localStorage.getItem("socius_pseudonym") || "").trim().
 let selectedPseudonym = forcedPseudonym || storedPseudonym || "";
 const isPseudonymLocked = Boolean(forcedPseudonym || storedPseudonym);
 
+const GENDER_BADGES = {
+  mujer: "M",
+  femenino: "M",
+  hombre: "H",
+  masculino: "H",
+  "no binario": "NB",
+  nobinario: "NB",
+  no_binario: "NB",
+  "prefiero no decirlo": "PD",
+  prefiero_no_decirlo: "PD",
+  "prefiero no responder": "PD"
+};
+
 function normalizePseudo(raw) {
   return (raw || "").trim().toUpperCase();
+}
+
+function formatGenderCode(rawGender) {
+  if (!rawGender) return "";
+  const normalized = String(rawGender).trim().toLowerCase();
+  return GENDER_BADGES[normalized] || rawGender.trim().toUpperCase();
+}
+
+function escapeJsSingleQuote(str) {
+  return String(str).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
 }
 
 function shouldAcceptPoint(pseudo, allowAutoLock = true) {
@@ -332,8 +355,20 @@ function renderParticipantList(participants, activePseudo) {
 
   list.innerHTML = participants
     .map((p) => {
-      const isSelected = normalizePseudo(p) === normalizePseudo(activePseudo);
-      return `<li><button type="button" class="participant-item ${isSelected ? "active" : ""}" onclick="onParticipantChange('${p}')">${p}</button></li>`;
+      const isObject = typeof p === "object" && p !== null;
+      const pseudo = isObject
+        ? (p.pseudonym ?? p.seudonimo ?? p.name ?? "")
+        : String(p);
+      const rawGender = isObject
+        ? (p.gender ?? p.genero ?? p.sex ?? "")
+        : "";
+
+      const code = formatGenderCode(rawGender);
+      const label = code ? `${pseudo} (${code})` : pseudo;
+      const isSelected = normalizePseudo(pseudo) === normalizePseudo(activePseudo);
+      const safePseudo = escapeJsSingleQuote(pseudo);
+
+      return `<li><button type="button" class="participant-item ${isSelected ? "active" : ""}" onclick="onParticipantChange('${safePseudo}')">${label}</button></li>`;
     })
     .join("");
 }
