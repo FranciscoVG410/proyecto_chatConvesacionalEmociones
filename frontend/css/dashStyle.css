@@ -9,20 +9,21 @@ body {
     align-items: center;
     gap: clamp(10px, 1.4vw, 16px); 
     height: 100vh;
+    height: 100dvh;
     box-sizing: border-box;
     overflow: hidden;
 }
 
 /* ENCABEZADO PRINCIPAL */
 .main-header {
-    height: 110px;
+    height: clamp(72px, 10vh, 110px);
     width: 100%;
     text-align: center;
     flex-shrink: 0;
 }
 
 .main-header img {
-    height: 110px;
+    height: 100%;
     max-width: 100%;
     object-fit: contain;
     display: block;
@@ -31,10 +32,11 @@ body {
 
 /* CONTENEDOR PRINCIPAL */
 .dashboard-container {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(225px, 275px) minmax(0, 1fr) minmax(220px, 275px);
     width: 100%;
     flex: 1; 
-    gap: clamp(12px, 1.6vw, 22px);
+    gap: clamp(12px, 1.5vw, 20px);
     min-height: 0;
 }
 
@@ -44,26 +46,25 @@ body {
     box-shadow: 0 10px 25px rgba(0,0,0,0.15); 
     border: 4px solid #e2e8f0;
     border-radius: 16px;
-    padding: clamp(12px, 1.5vw, 20px); 
+    padding: clamp(12px, 1.4vw, 18px); 
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
+    min-height: 0;
 }
 
 .panel-left {
-    width: clamp(235px, 23vw, 310px);
     background-color: #b39ddb;
-    flex-shrink: 0;
     overflow-y: auto; 
 }
 
 .panel-right {
-    flex: 1;
     min-width: 0;
+    overflow: hidden;
 }
 
 .panel-left .report-action {
-    margin-top: 12px;
+    margin-top: auto;
 }
 
 .panel-left .btn-report {
@@ -82,7 +83,6 @@ body {
 
 .panel-right-img {
     max-width: 70%;
-    max-height: auto;
     height: auto;
     display: block;
     margin: 0 auto 8px auto;
@@ -94,6 +94,7 @@ body {
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 10px;
     padding: 0 8px;
@@ -132,7 +133,7 @@ body {
 .card { 
     background-color: #605db3; 
     color: #fcf8fc; 
-    padding: clamp(9px, 1.1vw, 14px) clamp(11px, 1.2vw, 16px); 
+    padding: clamp(8px, 1vw, 13px) clamp(10px, 1.1vw, 15px); 
     border-radius: 8px; 
     margin-bottom: clamp(6px, 0.8vw, 10px);
 }
@@ -146,12 +147,12 @@ body {
 .prompt-text {
     font-style: italic;
     color: #f8fafc;
-    font-size: clamp(12px, 1vw, 14px);
+    font-size: clamp(12px, 0.95vw, 14px);
     line-height: 1.35;
 }
 
 .val { 
-    font-size: clamp(1.05rem, 1.3vw, 1.3rem); 
+    font-size: clamp(1rem, 1.25vw, 1.25rem); 
     font-weight: bold; 
     color: #38bdf8;
     line-height: 1.25;
@@ -186,18 +187,18 @@ body {
 
 .legend-box {
     position: absolute;
-    top: clamp(10px, 1.5vw, 18px);
-    right: clamp(10px, 1.5vw, 18px);
+    top: clamp(10px, 1.4vw, 16px);
+    right: clamp(10px, 1.4vw, 16px);
     background: rgba(255, 255, 255, 0.92);
     padding: clamp(8px, 1vw, 12px) clamp(10px, 1.2vw, 14px);
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.06);
     font-family: 'Segoe UI', sans-serif;
-    font-size: clamp(10px, 0.82vw, 11px);
+    font-size: clamp(10px, 0.8vw, 11px);
     color: #1e293b;
     border: 1px solid #e2e8f0;
     z-index: 10;
-    max-width: clamp(145px, 18vw, 190px);
+    max-width: clamp(145px, 17vw, 185px);
 }
 
 .legend-title {
@@ -274,6 +275,7 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 9999;
+    padding: 16px;
 }
 
 .login-card {
@@ -319,22 +321,25 @@ body {
     text-align: center;
 }
 
+/* PANEL DERECHO DE CONTROLES (PARTICIPANTES + PERIODO) */
 .panel-controls {
     display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    align-items: center;
+    flex-direction: column;
     justify-content: space-between;
+    gap: 14px;
+    overflow: hidden;
 }
 
 .control-group {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
 }
 
 .control-label {
-    font-weight: 600;
+    font-weight: 700;
+    font-size: clamp(13px, 1vw, 15px);
 }
 
 .control-select {
@@ -343,33 +348,48 @@ body {
 }
 
 .period-switch {
-    display: inline-flex;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 6px;
+    flex-shrink: 0;
 }
 
 .period-btn {
-    padding: 6px 12px;
+    padding: 8px 10px;
+    border: none;
     border-radius: 6px;
+    background: #ffffff;
+    color: #1e293b;
+    font-weight: 600;
+    font-size: clamp(12px, 0.9vw, 13px);
     cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.period-btn:hover {
+    background: #f1f5f9;
 }
 
 .period-btn.active {
+    background: #4f46e5;
+    color: #ffffff;
     font-weight: 700;
 }
 
 .control-group--participants {
-    align-items: flex-start;
+    flex: 1;
+    min-height: 0;
 }
 
 .participant-list {
     list-style: none;
     margin: 0;
-    padding: 4px;
-    max-height: 120px;
-    min-width: 180px;
+    padding: 6px;
+    flex: 1;
+    min-height: 90px;
     overflow-y: auto;
     border: 1px solid #cbd5e1;
-    border-radius: 6px;
+    border-radius: 8px;
     background: #ffffff;
     display: flex;
     flex-direction: column;
@@ -379,11 +399,12 @@ body {
 .participant-item {
     width: 100%;
     text-align: left;
-    padding: 6px 10px;
+    padding: 8px 10px;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     background: transparent;
     color: #1e293b;
+    font-size: clamp(12px, 0.9vw, 13px);
     cursor: pointer;
 }
 
@@ -400,4 +421,63 @@ body {
 .participant-empty {
     padding: 6px 10px;
     color: #64748b;
+    font-size: 13px;
+}
+
+/* TABLET VERTICAL / PANTALLAS MEDIANAS */
+@media (max-width: 1024px) {
+    body {
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;
+    }
+
+    .dashboard-container {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .panel-right {
+        grid-column: 1 / -1;
+        order: -1;
+    }
+
+    .chart-container {
+        height: clamp(320px, 46vh, 460px);
+    }
+
+    .participant-list {
+        max-height: 180px;
+    }
+}
+
+/* MÓVILES / PANTALLAS PEQUEÑAS */
+@media (max-width: 640px) {
+    .main-header {
+        height: 64px;
+    }
+
+    .dashboard-container {
+        grid-template-columns: 1fr;
+    }
+
+    .panel-right {
+        grid-column: auto;
+        order: 0;
+    }
+
+    .chart-container {
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    #vadChart {
+        height: 300px !important;
+    }
+
+    .legend-box {
+        position: static;
+        max-width: 100%;
+    }
 }
